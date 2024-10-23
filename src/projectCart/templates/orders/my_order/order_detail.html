@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Order Detail - N0: {{ order.order_number }}
+{% endblock title %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="container" style="margin: 0 auto; width:81%;">
+        <a href="{{request.META.HTTP_REFERER}}" class="btn btn-light"><i class="fa fa-chevron-left mr-2"></i>  Back to Order</a>
+    </div>
+    <div class="container" style="margin: 0 auto; width:80%; padding:50px; background: #ffffff; margin-top:20px; margin-bottom:50px;">
+        <div id="printableArea" class="row invoice row-printable">
+            <div class="col-md-12">
+                <!-- col-lg-12 start here -->
+                <div class="panel panel-default plain" id="dash_0">
+                    <!-- Start .panel -->
+                    <div class="panel-body p30">
+                        <div class="row">
+                            <!-- Start .row -->
+                            <div class="col-lg-6">
+                                <!-- col-lg-6 start here -->
+                                <div class="invoice-logo"><img src="{% static 'images/Ar_Rasyiid.png' %}" class="ml-3" alt="Invoice logo" style="max-height: 40px;"></div>
+                            </div>
+                            <!-- col-lg-6 end here -->
+                            <div class="col-lg-6">
+                                <!-- col-lg-6 start here -->
+                                <div class="invoice-from mr-3 mt-4">
+                                    <ul class="list-unstyled text-right">
+                                        <li><strong>Invoiced To</strong></li>
+                                        <li>{{ order.address.full_name }}</li>
+                                        <li>{{order.address.full_address}}</li>
+                                        <li>{{order.address.district.name}}, {{order.address.district.city.name}},</li>
+                                        <li>{{order.address.district.province.name}}</li>
+                                        <li>{{order.address.district.city.post_code}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- col-lg-6 end here -->
+                            <div class="col-lg-12">
+                                <!-- col-lg-12 start here -->
+                                <div class="invoice-details mt25 ml-3">
+                                    <div class="well">
+                                        <ul class="list-unstyled mb0">
+                                            <li><strong>Order No:</strong> #{{order.order_number}}</li>
+                                            <li><strong>Invoice No</strong> #{{payment.payment_id}}</li>
+                                            <li><strong>Invoice Date:</strong> {{ payment.created_at|date }} </li>
+                                            <li>
+                                                <strong class="mr-2">Status:</strong>
+                                                <span class=" {% if status == 'pending' %}badge badge-warning {% elif status == 'cancel' or status == 'denny' or status == 'expire' %} badge badge-danger {% else %} badge badge-success {% endif %}">
+                                                    {{ status }}
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <h5 class="text-truncate font-size-14 mt-4 mb-3 ml-5">Order Summary</h4>
+                                <div class="invoice-items">
+                                    <div class="table-responsive">
+                                        <table class="table align-middle table-nowrap table-centered mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th><strong class="ml-3">Description</strong></th>
+                                                    <th>Price</th>
+                                                    <th class="text-center" style="width: 200px;"><strong class="ml-4">Total</strong></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for item in ordered_product %}
+                                                    <tr>
+                                                        <td>
+                                                            <div>
+                                                                <h6 class="text-truncate font-size-14 mb-1 ml-3">{{item.product.product.name}}</h6>
+                                                                <p class="text-muted small ml-3">
+                                                                    {% if item.variation.all %}
+                                                                        {% for i in item.variation.all %}
+                                                                            {{ i.varian_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                </p>
+                                                            </div>
+                                                                    
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <h6 class="text-truncate font-size-14 mb-1 mt-2">Rp. {{item.product_price|floatformat:"2g"}}</h6>
+                                                                <h6 class="text-muted small mt-0">Qty: {{item.quantity}} x</h6>
+                                                            </div>
+                                                        <td class="text-center"><p class="text-truncate font-size-13 font-weight-bold mt-3 ml-5">Rp. {% widthratio item.product_price 1 item.quantity %} </p></td>
+                                                        <!-- <td class="text-right">Rp. {{ item.product_price|floatformat:"2g" }} </td> -->
+                                                    </tr>
+                                                {% endfor %}
+                                                <tr>
+                                                    <th scope="row" class=""><strong class="ml-3">Sub Total :</strong></th>
+                                                    <td class="text-right text-muted">{{ordered_product.count}} item</td>
+                                                    <td class="text-right text-muted">Rp. {{subtotal|floatformat:"2g"}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row" class="border-0"><strong class="ml-3">Diskon :</strong></th>
+                                                    <td class="border-0 text-right text-muted text-danger"><strong class="text-danger">{{0}}%</strong></td>
+                                                    <td class="border-0 text-right text-muted">Rp. {{0|floatformat:"2g"}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row" class="border-0"><strong class="ml-3">Tax :</strong></th>
+                                                    <td class="border-0 text-right text-muted text-success"><strong class="text-success">2%</strong></td>
+                                                    <td class="border-0 text-right text-muted">Rp. {{tax|floatformat:"2g"}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row" class="border-0 "><strong class="ml-3">Shipping Charge :</strong></th>
+                                                    <td class="border-0 text-right text-muted"><strong>Delivery Express</strong></td>
+                                                    <td class="border-0 text-right text-muted">Rp. {{delivery|floatformat:"2g"}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row" colspan="2" class=""><strong class="ml-3">Grand Total :</strong></th>
+                                                    <th class="text-right"><h6 class="m-0 fw-semibold font-size-16">Rp. {{status_response.gross_amount|floatformat:"2g"}}</h6></th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="invoice-footer mt-4 ml-3">
+                                    <h5 class="text-center">Thank you for shopping with us!</h5>  
+                                    {% if status_response.payment_type == 'bank_transfer' %}
+                                            <div class="form-row mt-4">
+                                                <p for="" class="text-truncate font-size-14 mb-1">Expiry Date :</p>
+                                                <p class="ml-3" for="">{{status_response.expiry_time}}</p>
+                                            </div>
+                                            <div class="form-row">
+                                                <p class="text-truncate font-size-14 mb-1" for="">Payment Type :</p>
+                                                <p class="ml-3" for=""><strong>{{status_response.payment_type}}</strong></p>
+                                            </div>  
+                                            {% for bank in status_response.va_numbers %}
+                                                <div class="form-row">
+                                                    <p class="text-truncate font-size-14 mb-1" for="">Bank :</p>
+                                                    <p class="ml-3" for=""><strong>{{bank.bank}}</strong></p>
+                                                </div>
+                                                <div class="form-row">
+                                                    <p class="text-truncate font-size-14 mb-1" for="">Va_num :</p>
+                                                    {% if status == "pending" %}
+                                                    <p class="ml-3" for=""><span class="badge badge-light" style="font-size: medium;">{{bank.va_number}}</span></p>
+                                                    {% else %}
+                                                    <p class="ml-3" for=""><del class="badge badge-success" style="font-size: medium;">{{bank.va_number}}</del></p>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        {% elif status_response.payment_type == 'echannel' %}
+                                            <div class="form-row ">
+                                                <p class="text-truncate font-size-14 mb-1" for="">Bank :</p>
+                                                <p class="ml-3" for=""><strong>Mandiri Bill</strong></p>
+                                            </div>
+                                            <div class="form-row">
+                                                <p class="text-truncate font-size-14 mb-1" for="">Biller-code :</label>
+                                                <p for=""><span class="badge badge-light" style="font-size: medium;">{{status_response.biller_code}}</span></p>
+                                            </div>
+                                            <div class="form-row">
+                                                <p class="text-truncate font-size-14 mb-1" for="">Bill-Key :</label>
+                                                <p for=""><span class="badge badge-light" style="font-size: medium;">{{status_response.bill_key}}</span></p>
+                                            </div>                 
+                                        {% endif %}                      
+                                        <div class="form-row">
+                                            <p for="" class="text-truncate font-size-14 mb-1">Grand Total :</p>
+                                            <p class="ml-3" for=""><span class="badge badge-light" style="font-size: medium;">Rp. {{status_response.gross_amount}}</span></p>
+                                        </div>
+                                    {% if status == 'pending' %}
+                                    <label class="mt-2" for=""><strong class="mr-2">Note : <br></strong><span class="badge badge-warning ml-4 mt-1" style="font-size: medium;">Please make payment as soon as possible ...!</span></label>    
+                                    {% elif status == 'settlement'%}
+                                    <label class="mt-2" for=""><strong class="mr-2">Note : <br></strong><span class="badge badge-success mb-3 ml-4 mt-1" style="font-size: medium;">Your order has been received</span></label>
+                                    {% elif status == 'failure'%}
+                                    <label class="mt-2" for=""><strong class="mr-2">Note : <br></strong><span class="badge badge-gray mb-3 ml-4 mt-1" style="font-size: medium;">Your Payment is being processed</span></label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- col-lg-12 end here -->
+                        </div>
+                        <!-- End .row -->
+                    </div>
+                </div>
+                <!-- End .panel -->
+            </div>
+            <!-- col-lg-12 end here -->
+        </div>
+    </div>
+
+    <div class="d-print-none text-center">
+        <div class="float-end">
+            <a href="javascript:void(0);" onclick="printPageArea('printableArea')" class="btn btn-success me-1"><i class="fa fa-print"></i> Print</a>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+{% block script %}
+<script>
+//print form invoice
+// Function to print invoice
+function printPageArea(areaID){
+    var printContent = document.getElementById(areaID).innerHTML;
+    var originalContent = document.body.innerHTML;
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
+}
+
+</script>
+{% endblock script %}

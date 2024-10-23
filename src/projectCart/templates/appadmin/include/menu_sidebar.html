@@ -1,0 +1,148 @@
+{% load static %}
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand py-4">
+      <a href="{% url 'dashboard_admin' %}" class="d-block w-100">
+        <img src="{% static './images/Ar_Rasyiid.png' %}" alt="" class="app-brand-img w-px-150">
+      </a>
+      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+      <i class="bx bx-x d-block d-lg-none bx-sm align-middle"></i>
+    </a>
+    </div>
+
+    <div class="menu-inner-shadow mt-0"></div>
+
+    <ul class="menu-inner py-1 mb-3">
+      <!-- Dashboard -->
+      <li class="menu-item {% if '/app-admin/' == request.path %} active {% endif %} ">
+        <a href="{% url 'dashboard_admin' %}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-home-circle"></i>
+          <div data-i18n="Analytics">Dashboard</div>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="{% url 'store' %}" target="_blank" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-store"></i>
+          <div data-i18n="Analytics">Store</div>
+        </a>
+      </li>
+
+      <!-- Orders -->
+      <li class="menu-header small text-uppercase"><span class="menu-header-text">Orders</span></li>
+      <li class="menu-item {% if '/app-admin/orders/' == request.path %} active {% endif %}">
+        <a href="{% url 'orders' %}" class="menu-link" >
+          <i class="menu-icon tf-icons bx bx-cart-alt"></i>
+          <div data-i18n="Support">Order</div>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-file"></i>
+          <div data-i18n="Documentation">Transactions</div>
+        </a>
+      </li>
+
+      <!--  Collection Product -->
+      <li class="menu-header small text-uppercase"><span class="menu-header-text">Collection</span></li>
+      <!-- Category -->
+      <li class="menu-item {% if '/app-admin/category/' == request.path %} active {% endif %}">
+        <a href="{% url 'category' %}" class="menu-link" >
+          <i class="menu-icon tf-icons bx bx-category-alt"></i>
+          <div data-i18n="Support">Category</div>
+        </a>
+      </li>
+      <!-- Product -->
+      <li class="menu-item 
+      {% if '/app-admin/products/' == request.path or '/app-admin/add-product/' == request.path %} 
+      active open 
+      {% endif %}">
+        <a href="javascript:void(0)" class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-collection"></i>
+          <div data-i18n="User interface">Products</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {% if '/app-admin/products/' == request.path %} active {% endif %}">
+            <a href="{% url 'products' %}" class="menu-link">
+              <div data-i18n="Alerts">Products</div>
+            </a>
+          </li>
+          <li class="menu-item menu-item {% if '/app-admin/add-product/' == request.path %} active {% endif %} ">
+            <a href="{% url 'add_product' %}" class="menu-link">
+              <div data-i18n="Badges">Create</div>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!-- Warehouse -->
+      <li class="menu-item 
+      {% if '/app-admin/warehouse/' == request.path or '/app-admin/add-warehouse/' == request.path %} 
+      active open 
+      {% endif %}">
+        <a href="javascript:void(0)" class="menu-link menu-toggle">
+          <i class='menu-icon tf-icons bx bx-building-house' ></i>
+          <div data-i18n="Support">Warehouse</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {% if '/app-admin/warehouse/' == request.path %} active {% endif %}">
+            <a href="" class="menu-link">
+              <div data-i18n="Alerts">Index</div>
+            </a>
+          </li>
+          <li class="menu-item menu-item {% if '/app-admin/add-warehouse/' == request.path %} active {% endif %} ">
+            <a href="{% url 'add_warehouse' %}" class="menu-link">
+              <div data-i18n="Badges">Create</div>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Statistic -->
+      <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Statistic</span>
+      </li>
+      <li class="menu-item {% if '/app-admin/analisis/' == request.path %} active {% endif %}">
+        <a href="{% url 'analisis' %}" class="menu-link" >
+          <i class="menu-icon tf-icons bx bx-bar-chart-square"></i>
+          <div data-i18n="Support">Analisis</div>
+        </a>
+      </li>
+
+      <!-- Account -->
+      <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Accounts</span>
+      </li>
+      <li class="menu-item 
+        {% if '/app-admin/profile/' == request.path or '/app-admin/set_profile/' == request.path   %} 
+          active open 
+        {% endif %} ">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <i class='menu-icon tf-icons bx bxs-user-detail'></i>
+          <div data-i18n="Account Settings">Account Settings</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {% if '/app-admin/profile/' == request.path %} active {% endif %}">
+            <a href="{% url 'profile' %}" class="menu-link">
+              <div data-i18n="Account">Account</div>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="pages-account-settings-notifications.html" class="menu-link">
+              <div data-i18n="Notifications">Notifications</div>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="pages-account-settings-connections.html" class="menu-link">
+              <div data-i18n="Connections">Connections</div>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="menu-item {% if '/app-admin/customers/' == request.path %} active {% endif %}">
+        <a href="{% url 'customers' %}" class="menu-link" >
+          <i class="menu-icon tf-icons bx bxs-user-account"></i>
+          <div data-i18n="Support">Customers</div>
+        </a>
+      </li>
+    </ul>
+  </aside>

@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+	Ar-Rasyiid | Home
+{% endblock title %}
+
+{% block content %}
+<!-- ========================= SECTION MAIN ========================= -->
+<section class="section-intro padding-y-sm py-5">
+	<div class="container">
+		<div id="carouselExampleSlidesOnly" class="carousel slide mb-3" data-ride="carousel">
+			<div class="carousel-inner">
+			<div class="carousel-item active">
+				<img src="{% static 'images/banners/banner-ramadhan.png' %}" class="img-fluid" alt=".." >
+			</div>
+			<div class="carousel-item">
+				<img src="{% static 'images/banners/banner_1.png' %}" class="img-fluid" alt="...">
+			</div>
+			<div class="carousel-item">
+				<img src="{% static 'images/banners/banner_2.png' %}" class="img-fluid" alt="...">
+			</div>
+			</div>
+		</div>
+
+	</div> <!-- container //  -->
+</section>
+<!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- Start Categories of The Month -->
+<section class="section-intro padding-y-sm bg py-5">
+	<div class="container">
+		<div class="row text-center pt-3 mb-4">
+			<div class="col-lg-6 m-auto">
+				<h1 class="h1 mb-3">Categories of Moslem</h1>
+				<p>
+					Temukan pakain style dan trendi namun
+					tetap Syariah.
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			{% for category in category %}
+			<div class="col-md-6" style="margin: auto;">
+				<!-- ============================ COMPONENT BANNER 1 ================================= -->
+				<div class="card-banner mb-3" style="height:220px; background-image: url({{category.cat_image.url}});">
+					<article class="card-body caption">
+						<h3 class="card-title">{{category.category_name|truncatechars:25}}</h3>
+						<p>{{category.description|truncatechars:40}}</p>
+						<a href="{{ category.get_url }}" class="btn btn-warning mt-5"> View more </a>
+						
+					</article>
+				</div>
+				
+				<!-- ======================= COMPONENT BANNER 1  END .// ============================ -->
+			</div>
+			{% endfor %}
+	</div>
+</section>
+<!-- End Categories of The Month -->
+
+<!-- ========================= SECTION MAIN BANNER ========================= -->
+<section class="section-intro padding-y-sm py-5">
+	<div class="container">
+		<div class="intro-banner-wrap mb-3">
+			<img src="{% static 'images/banners/banner_4.png' %}" class="img-fluid rounded">
+		</div>
+
+	</div> <!-- container //  -->
+</section>
+<!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- ========================= SECTION PRODUCT POPULAR ========================= -->
+<section class="section-name padding-y-sm bg py-5">
+	<div class="container">
+		<header class="section-heading">
+			<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
+			<h3 class="section-title text-center">Popular products</h3>
+			<p class="text-center">
+				Produck Kami Yang Popular
+			</p>
+		</header>
+
+		<div class="row">
+			{% for obj in products %}
+			<div class="col-md-4 mt-5">
+			<!-- ============================ COMPONENT BANNER 4 ================================= -->
+				<div class="card-banner">
+					<div class="card-body" style="height:300px; background-image: url({{obj.images.url}});"> </div>
+					<div class="text-bottom"><h5 class="title">{{obj.name}}</h5>
+						<p>{{obj.description}} <br> Rp. {{obj.get_price}}</p>	
+						<div class="rating-star">
+							<span>
+								<i class="fa fa-star{% if obj.avrageReview < 0.5 %}-o{% elif obj.avrageReview >= 0.5 and obj.avrageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 1.5 %}-o{% elif obj.avrageReview >= 1.5 and obj.avrageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 2.5 %}-o{% elif obj.avrageReview >= 2.5 and obj.avrageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 3.5 %}-o{% elif obj.avrageReview >= 3.5 and obj.avrageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 4.5 %}-o{% elif obj.avrageReview >= 4.5 and obj.avrageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+							</span>
+						</div>
+					</div>
+					
+				</div>
+			<!-- ======================= COMPONENT BANNER 4  END .// ============================ -->
+			</div> <!-- col.// -->
+			{% endfor %}
+		</div>
+
+	</div><!-- container // -->
+</section>
+<!-- ========================= SECTION  END// ========================= -->
+
+<!-- ========================= SECTION Banner ========================= -->
+<section class="section-name padding-y-sm bg py-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<!-- ============================ COMPONENT BANNER 7 ================================= -->
+				<div class="card-banner" style="min-height:230px; background-image: url('static/images/banners/banner1.jpg');">
+					<div class="card-img-overlay white">
+						<h3 class="card-title font-italic text-secondary">Koko Batik Modren<br> right now</h3>
+						<p class="card-text text-dark font-weight-bold" style="max-width: 400px">Koko Batik merupakan perpaduan batik tulis yang bisa dipakai secara formal maupun non-formal.</p>
+						<a href="" class="btn btn-warning">Learn more</a>
+					</div>
+				</div>
+		<!-- ============================ COMPONENT BANNER 7  END .// =========================== -->
+			</div> <!-- col.// -->
+			<div class="col-md-4">
+				<!-- ============================ COMPONENT BANNER 8  ================================= -->
+				<div class="card-banner" style="min-height:230px; background-image: url('static/images/banners/banner-ramadhan.png');">
+				<div class="card-img-overlay text-white">
+					<h5 class="card-title">Best products</h5>
+					<p class="card-text">No matter how far along you are in your sophistication as an amateur astronomer, there is always one.</p>
+				</div>
+				</div>
+				<!-- ============================ COMPONENT BANNER 8  END .// ================================= -->
+			</div> <!-- col.// -->
+		</div>
+	</div><!-- container // -->
+</section>
+
+<!-- ========================= SECTION PRODUCTS COLLECTIONS ========================= -->
+<section class="section-name padding-y-smpy-5">
+	<div class="container">
+		<header class="section-heading">
+			<div class="text-center">
+				<h3 class="section-title text-center">Products Collection</h3>
+				<p class="text-center">
+					Temukan product terbaru kami sekarang juga !!!.
+				</p>
+			</div>
+		</header><!-- sect-heading -->
+
+		<div class="row">
+			<div class="col-md-8 mt-5">
+				<div class="card-banner">
+					<video
+							id="my-video"
+							class="video-js"
+							controls
+							preload="auto"
+							width="690"
+							height="405"
+							poster="{{publish.cat_image.url}}"
+							data-setup='{"playbackRates": [0.5, 1, 1.5, 2]}'
+						>
+							<source src="/media/{{publish.video_file}}" type="video/mp4" />
+							<p class="vjs-no-js">
+							To view this video please enable JavaScript, and consider upgrading to a
+							web browser that
+							<a href="https://videojs.com/html5-video-support/" target="_blank"
+								>supports HTML5 video</a
+							>
+							
+							</p>
+					</video>
+				</div>
+			</div>
+
+			<div class="col-md-4 mt-5">
+				<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+						{% for obj in category %}
+							{% if forloop.first %}
+								<li data-target="#carouselExampleIndicators" data-slide-to="{{forloop.counter0}}" class="active"></li>
+							{% else %}
+								<li data-target="#carouselExampleIndicators" data-slide-to="{{forloop.counter0}}"></li>
+							{% endif %}
+						{% endfor %}
+					  	<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+					</ol>
+					<div class="carousel-inner">
+						{% for obj in category %}
+							{% if forloop.first %}
+								<div class="carousel-item active  ">
+							{% else %}
+								<div class="carousel-item  ">
+							{% endif %}
+							<img class="d-block w-100 h-50" class="h-50 d-inline-block" src="{{ obj.cat_image.url}}" alt="{{obj.category_name}}">
+							</div>
+				
+						{% endfor %}
+					</div>
+				
+					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+					  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					  <span class="sr-only">Previous</span>
+					</a>
+					<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+					  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+					  <span class="sr-only">Next</span>
+					</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--========================= SECTION  END// ========================= -->
+
+
+<!-- ========================= SECTION NEW PRODUCTS ========================= -->
+<section class="section-name padding-y-sm bg py-5">
+	<div class="container">
+		<header class="section-heading">
+			<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
+			<div class="text-center">
+				<h3 class="section-title text-center">New Products</h3>
+				<p class="text-center">
+					Temukan product terbaru kami sekarang juga !!!.
+				</p>
+			</div>
+		</header><!-- sect-heading -->
+
+		<div class="row ">
+			{% for obj in new_product %}
+			<div class="col-md-4 mt-5">
+			<!-- ============================ COMPONENT BANNER 4 ================================= -->
+				<a href="">
+				<div class="card-banner" style="height:300px; background-image: url({{obj.images.url}});">
+					<article class="caption bottom">
+						<h5 class="card-title">{{obj.name}}</h5>
+						<p> Rp. {{obj.get_price}}</p>	
+						<div class="rating-star">
+							<span>
+								<i class="fa fa-star{% if obj.avrageReview < 0.5 %}-o{% elif obj.avrageReview >= 0.5 and obj.avrageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 1.5 %}-o{% elif obj.avrageReview >= 1.5 and obj.avrageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 2.5 %}-o{% elif obj.avrageReview >= 2.5 and obj.avrageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 3.5 %}-o{% elif obj.avrageReview >= 3.5 and obj.avrageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+								<i class="fa fa-star{% if obj.avrageReview < 4.5 %}-o{% elif obj.avrageReview >= 4.5 and obj.avrageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+							</span>
+						</div>
+					</article>
+				</div>
+				</a>
+			<!-- ======================= COMPONENT BANNER 4  END .// ============================ -->
+			</div> <!-- col.// -->
+			{% endfor %}
+		</div>
+
+	</div><!-- container // -->
+</section>
+<!--========================= SECTION  END// ========================= -->
+
+<!-- ========================= SECTION Testimoni ========================= -->
+<section class="section-name padding-y bg py-5">
+	<div class="container">
+		<header class="section-heading">
+			<div class="text-center">
+				<h3 class="section-title text-center">Testimonial</h3>
+				<p class="text-center">
+					Apa yang klien kami katakan tentang product Ar rasyid.
+				</p>
+			</div>
+		</header><!-- sect-heading -->
+		<!-- ============================ COMPONENT 1 ================================= -->
+		<div class="row ">
+			<div class="col-md-12 mt-4">
+				<div class="row owl-carousel owl-theme">
+					{% for obj in reviewall %}
+					<div class="items">
+						<div class="card">
+							<article class="card card-body">
+								<div class="icontext align-items-start ml-2" >
+									<img class="icon icon-md rounded-circle" src="{{obj.user.userprofile.profile_picture.url}}" style="max-width: 75px; max-height: 100px;">
+									<div class="text mt-2 ml-3">
+										<h6 class="title mb-2">{{obj.user.first_name}} {{obj.user.first_name}}</h6>
+										<p class="text-muted">Customer</p>
+									</div>
+								</div>
+								<figure class="text-center">
+									<!-- <span class="rounded-circle icon-md bg-primary"><i class="fa fa-user white"></i></span> -->
+									<!-- <img class="icon icon-md rounded-circle" src="{{obj.user.userprofile.profile_picture.url}}"> -->
+									<figcaption class="pt-4">
+									<h6 class="title mb-2">{{obj.product.name}}</h6>
+									<p>{{obj.review}} </p>
+									<div class="rating-star">
+										<span>
+											<i class="fa fa-star{% if obj.product.avrageReview < 0.5 %}-o{% elif obj.product.avrageReview >= 0.5 and obj.product.avrageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+											<i class="fa fa-star{% if obj.product.avrageReview < 1.5 %}-o{% elif obj.product.avrageReview >= 1.5 and obj.product.avrageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+											<i class="fa fa-star{% if obj.product.avrageReview < 2.5 %}-o{% elif obj.product.avrageReview >= 2.5 and obj.product.avrageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+											<i class="fa fa-star{% if obj.product.avrageReview < 3.5 %}-o{% elif obj.product.avrageReview >= 3.5 and obj.product.avrageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+											<i class="fa fa-star{% if obj.product.avrageReview < 4.5 %}-o{% elif obj.product.avrageReview >= 4.5 and obj.product.avrageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+										</span>
+									</div>
+									</figcaption>
+								</figure> <!-- iconbox // -->
+							</article> <!-- panel-lg.// -->
+						</div><!-- col // -->
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+			<!-- ============================ COMPONENT 1 END .// ================================= -->
+			
+	</div><!-- container // -->
+</section>
+<!--========================= SECTION  END// ========================= -->
+
+
+<!-- ========================= SECTION Contact Us ========================= -->
+<section class="section-name padding-y bg py-5">
+	<div class="container">
+		<header class="section-heading">
+			<div class="text-center">
+				<h3 class="section-title text-center">Contact Us</h3>
+				<p class="text-center">
+					Cantact Us Right Now.
+				</p>
+			</div>
+		</header><!-- sect-heading -->
+		<!-- ============================ COMPONENT 1 ================================= -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="d-flex align-items-center justify-content-center">
+					<div class="col-md-3">
+						<article class="card card-body">
+							<figure class="text-center">
+								<span class="rounded-circle icon-md bg-primary"><i class="fa fa-envelope white"></i></span>
+								<figcaption class="pt-4">
+								<h5 class="title">Email </h5>
+								<p> md.danny95@gmail.com <br> mhddanny1@gmail.com </p>
+								</figcaption>
+							</figure> <!-- iconbox // -->
+						</article> <!-- panel-lg.// -->
+					</div><!-- col // -->
+					<div class="col-md-3">
+						<article class="card card-body">
+							<figure class="text-center">
+								<span class="rounded-circle icon-md bg-success"><i class="fa fa-whatsapp white"></i></span>
+								<figcaption class="pt-4">
+								<h5 class="title">Whatshapp</h5>
+								<p> +62 8527 2330 324 <br> +62 8781 8811 742 </p>
+								</figcaption>
+							</figure> <!-- iconbox // -->
+						</article> <!-- panel-lg.// -->
+					</div> <!-- col // -->
+					<div class="col-md-3">
+						<article class="card card-body">
+							<figure class="text-center">
+								<span class="rounded-circle icon-md bg-danger"><i class="fa fa-map-marker white"></i></span>
+								<figcaption class="pt-4">
+								<h5 class="title">DKI Jakarta</h5>
+								<p>Jl. Thamrin Boulevard, Kb. Melati, Tanah Abang, 10230</p>
+								</figcaption>
+							</figure> <!-- iconbox // -->
+						</article> <!-- panel-lg.// -->
+					</div> <!-- col // -->
+				</div>
+			</div>
+		</div>
+			<!-- ============================ COMPONENT 1 END .// ================================= -->	
+	</div><!-- container // -->
+</section>
+<!--========================= SECTION  END// ========================= -->
+
+
+{% endblock content %}
+
+{% block script %}
+
+	<script>
+		$('.owl-carousel').owlCarousel({
+			loop:true,
+			margin:10,
+			nav:true,
+			responsive:{
+				0:{
+					items:1
+				},
+				250:{
+					items:3
+				},
+				1000:{
+					items:3
+				},
+			}
+		})
+	</script>
+
+{% endblock script %}

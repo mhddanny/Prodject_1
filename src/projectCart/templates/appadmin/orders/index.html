@@ -1,0 +1,266 @@
+{% extends 'appadmin/master.html' %}
+{% load static %}
+
+{% block title %}
+    Admin | {{ title }}
+{% endblock title %}
+
+{% block stylesheets %}
+<!-- <link rel="stylesheet" href="{% static 'DataTables/Bootstrap-5-5.3.0/css/bootstrap.min.css' %}" />
+<link rel="stylesheet" href="{% static 'DataTables/Responsive-2.5.0/css/responsive.bootstrap5.min.css' %}" />
+<link rel="stylesheet" href="{% static 'DataTables/DataTables-1.13.8/css/dataTables.bootstrap5.min.css' %}" /> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+    <nav aria-label="breadcrumb ">
+        <ol class="breadcrumb breadcrumb-style1 p-2">
+          <li class="breadcrumb-item">
+            <a href="{% url 'dashboard_admin' %}" style="font-size: large;">Home</a>
+          </li>
+          <li class="breadcrumb-item active" style="font-size: large;">Orders</li>
+        </ol>
+      </nav>
+    {% include 'appadmin/include/alerts.html' %}
+    
+    {% include 'appadmin/include/order/navbar_slide.html' %}
+    <div class="card card-frame mb-2">
+        <div class="row">
+            <div class="header-body">
+                <div class="row align-items-center py-1 mb-2">
+                    <div class="pt-2 col-4 px-5">
+                        Product
+                    </div>
+                    <div class="pt-2 col-2 text-lg-center">
+                        Total Pesanan
+                    </div>
+                    <div class="pt-2 col-2 text-center">
+                        Status
+                    </div>
+                    <div class="pt-2 col-2 text-lg-center">
+                        Jasa Kirim
+                    </div>
+                    <div class="pt-2 col px-4">
+                        Aksi
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-12" style="padding: auto;">
+            {% for obj in orders %}
+            <div class="card mb-2 tab-content" id="pills-tabContent" >
+                <div class="card-body px-0 pt-0 pb-2 tab-pane fade show active" id="{{title}}" role="tabpanel">
+                    <div class="table-responsive p-0">
+                        <div id="myTable" class="table align-items-center mb-0 display">
+                            <div class="mt-1">
+                                <div class="d-flex px-3 py-0 mb-2" style="background-color: aliceblue;">
+                                    <div class="px-2 mt-1">
+                                        <i class="text-primary text-sm opacity-10">N0 : {{forloop.counter}}</i>
+                                    </div>
+                                    <div class="px-2 mt-1">
+                                        <i class="ni ni-circle-08 text-warning text-sm opacity-10"></i>
+                                    </div>
+                                    <h6 class="text-sm opacity-7  mt-1">{{obj.user.username}}</h6>
+                                    <h6 class="text-sm opacity-7 mt-1">{{obj.order_number}}</h6>
+                                    <h6 class="text-sm opacity-7 mt-1">Paket 1</h6>
+                                    <h6 class="text-sm opacity-7 mt-1">({{obj.get_sum_total_quantity}} Product)</h6>
+                                </div>
+                                <div class="row align-items-start mb-2">
+                                    <div class="col-4 align-middle text-left">
+                                        {% for item in obj.orderproduct_set.all %}
+                                        <div class="d-flex px-4 py-1">
+                                            <div>
+                                                <img src="{{item.product.product.images.url}}" class="avatar avatar-sm me-4">
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm">{{item.product.product.name}}</h6>
+                                                <p class="text-xs text-secondary mb-0">
+                                                    {% if item.variation.all %}
+                                                        {% for i in item.variation.all %}
+                                                            {{ i.varian_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
+                                                        {% endfor %}
+                                                    {% endif %} x {{item.quantity}}
+                                                </p>
+                                                <!-- <span class="text-secondary text-xs font-weight-bold">Orer Number : {{obj.order.order_number}}</span> -->
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col align-middle text-center">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-1 text-sm">Rp. {{obj.get_sum_total}}</h6>
+                                            <span class="text-secondary text-xs font-weight-bold">{{obj.payment.payment_method}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col align-middle text-center">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <span class="mb-1 badge badge-sm {% if obj.status == 'PENDING' %} bg-gradient-warning 
+                                                        {% elif obj.status == 'CANCELLED' %} bg-gradient-danger 
+                                                        {% elif obj.status == 'CONFIRM' %} bg-gradient-primary
+                                                        {% elif obj.status == 'ON_THE_WAY' %} bg-gradient-info
+                                                        {% else %} bg-gradient-success {% endif %}"
+                                            >
+                                                {{ obj.status }}
+                                            </span>
+                                            <span class="text-secondary text-xs font-weight-bold">{{obj.payment.payment_type}}</span>
+                                            <span class="text-secondary text-xs font-weight-bold">{{obj.payment.created_at|date:"h M Y"}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col align-middle text-center">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">{{obj.orderdelivery.courier}}</h6>
+                                            <span class="text-secondary text-xs font-weight-bold">Rp. {{obj.orderdelivery.cost}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col align-middle">
+                                        <!-- Check item count -->
+                                        <a href="{% url 'order_detail_admin' obj.id %}" class="btn btn-sm bg-gradient-primary mt-2 mb-1" type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Detail">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a><br>
+                                        {% if obj.status == 'PENDING'%}
+                                            {% if obj.payment.status == 'settlement' or obj.payment.status == 'capture' %}
+                                            <a href="{% url 'confirm_order' obj.id %}" class="btn btn-sm bg-gradient-secondary mb-1" type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Kirim" onclick="return confirm('Are you sure Confirm this order ?')">
+                                                <i class="far fa-edit"></i>
+                                            </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if obj.status == 'CONFIRM' %}
+                                            {% if obj.payment.status == 'settlement' or obj.payment.status == 'capture' %}
+                                            <a href="{% url 'ready_to_sent' obj.id %}" class="btn btn-sm bg-gradient-success mb-1" type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Kirim" onclick="return confirm('Are you sure Ready to Delivery this order ?')">
+                                                <i class="ni ni-curved-next"></i>
+                                            </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <!-- <button id="confirOrder" name="{{obj.id}}" type="submit" value="{{obj.id}}" class="btn btn-sm bg-gradient-secondary" data-bs-toggle="modal" data-bs-placement="right" title="Kirim" data-bs-target="#confirmOrder">
+                                            <i class="far fa-edit"></i>
+                                        </button> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Knformasi -->
+            <!-- Form Confirm Order -->
+            <!-- <form id="form" action="" method="post">
+                <div class="modal fade" id="confirmOrder" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmOrderLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content">
+                            <div class="modal-body p-0">
+                                <div class="card card-plain">
+                                    <div class="card-header pb-0 text-left">
+                                    <h6 class="font-weight-bolder text-info text-gradient">Kirim Pesanan</h6>
+                                    <p class="mb-0">Order : #{{obj.order_number}}</p> {{obj.status}}
+                                    </div>
+                                    <div class="card-body">
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button  id="closeModal" type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                
+                                {% if obj.status == 'PENDING' %}
+                                    <button type="submit" name="button" class="btn btn-sm btn-primary">Confirm</button>
+                                    <a href="" type="button" class="btn btn-sm btn-primary" disabled>Siap Kirim</a>
+                                {% elif obj.status == 'CONFIRM' %}
+                                    <a href="" type="button" class="btn btn-sm btn-primary" disabled>Siap Kirim</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form> -->
+            {% endfor %}
+
+            <!-- Pagination -->
+            <div class="pagination pagination-info justify-content-center">
+                <nav aria-label="Page navigation example ">
+                    {% if orders.has_other_pages %}
+                    <ul class="pagination">
+                        {% if orders.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ orders.previous_page_number }}" aria-label="Previous">
+                            <i class="fa fa-angle-left"></i>
+                            <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#link" aria-label="Previous">
+                                <span aria-hidden="true"><i class="ni ni-bold-left" aria-hidden="true"></i></span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for i in orders.paginator.page_range %}
+                        {% if orders.number == i %}
+                        <li class="page-item active">
+                            <a class="page-link" href="#link">{{i}}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{i}}">{{i}}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if orders.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ orders.next_page_number }}" aria-label="Next">
+                            <i class="fa fa-angle-right"></i>
+                            <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#link" aria-label="Next">
+                                <span aria-hidden="true"><i class="ni ni-bold-right" aria-hidden="true"></i></span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script> -->
+<!-- <script src="{% static 'DataTables/jQuery-1.12.4/jquery-1.12.4.js' %}"></script>
+<script src="{% static 'DataTables/DataTables-1.13.8/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'DataTables/DataTables-1.13.8/js/dataTables.bootstrap5.min.js' %}"></script>
+<script src="{% static 'DataTables/Responsive-2.5.0/js/responsive.bootstrap5.min.js' %}"></script>
+<script src="{% static 'DataTables/pdfmake-0.2.7/pdfmake.js' %}"></script> -->
+<!-- <link rel="stylesheet" href="{% static 'DataTables/Bootstrap-5-5.3.0/js/bootstrap.bundle.min.js' %}" /> -->
+
+<!-- <script>
+    
+    $(document).ready( function () {
+        new DataTable('#myTable', {
+            responsive: true,
+            
+        });
+    });
+</script> -->
+<script>
+    $(document).ready(function() {
+        
+        $('#closeModal').click(function() {
+            $('#confirmOrder').modal('hide');
+            window.location.reload()
+        });
+    });
+</script>
+{% endblock javascripts %}

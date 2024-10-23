@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+	Ar-Rasyiid | Blogs
+{% endblock title %}
+
+{% block head %}
+
+{% endblock head %}
+
+{% block content %}
+
+<!-- ========================= SECTION PRODUCT POPULAR ========================= -->
+<section class="section-pagetop bg">
+  <div class="container ">
+    {% include 'includes/alerts.html' %}
+		<header class="section-heading">
+			<h2 class="section-title text-center">Blog Page</h2>
+			<nav class="d-flex align-items-center justify-content-center">
+                <ol class="breadcrumb text-white">
+                    <li class="breadcrumb-item"><a href="{% url 'store' %}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Blog</li>
+                </ol>  
+                </nav>
+		</header>
+	</div><!-- container // -->
+</section>
+<!-- ========================= SECTION  END// ========================= -->
+
+<section class="section-intro padding-y-sm py-2">
+	<div class="container">
+		<div id="carouselExampleSlidesOnly" class="mb-3" data-ride="carousel">
+			<div class="carousel-inner">
+			<div class="carousel-item active">
+				<img src="{% static 'images/banners/cover.png' %}" class="img-fluid" alt=".." >
+			</div>
+			</div>
+		</div>
+	</div> 
+</section>
+
+<section class="section-name padding-y py-5 bg mb-2">
+    <div class="container mb-5">
+        <div class="row">
+            
+            <div class="col-md-4">
+              <!-- ============================ COMPONENT ITEM BG ================================= -->
+              <div class="shadow-sm card-banner">
+                
+                <div class="p-4" style="width:75%">
+                  <h5 class="card-title">Who We Are ?</h5>
+                  <p>Some quick example text to build on the card title and make up the bulk .</p>
+                </div> 
+              </div>
+              <!-- ============================ COMPONENT ITEM BG  END .// =========================== -->
+            </div> <!-- col.// -->
+            
+            <div class="col-md-4">
+              <!-- ============================ COMPONENT ITEM BG ================================= -->
+              <div class="shadow-sm card-banner">
+                <div class="p-4" style="width:70%">
+                  <h5 class="card-title">Who We Do ?</h5>
+                  <p>Some quick example text to build on the card title and make up the bulk.</p>
+                </div>
+              </div>
+              <!-- ============================ COMPONENT ITEM BG  END .// =========================== -->
+            </div> <!-- col.// -->
+            
+            <div class="col-md-4">
+              <!-- ============================ COMPONENT ITEM BG ================================= -->
+              <div class="shadow-sm card-banner">
+                <div class="p-4" style="width:75%">
+                  <h5 class="card-title">Why Choose Us</h5>
+                  <p>Some quick example text to build on the card title and make up the bulk.</p>
+          
+                </div>
+              </div>
+              <!-- ============================ COMPONENT ITEM BG  END .// =========================== -->
+            </div> <!-- col.// -->
+        </div>
+    
+    </div> <!-- container .//  -->
+    <!-- Blog post -->
+    <div class="container py-5"> 
+        <div class="row mb-5">
+            <main class="col-md-8">
+                {% for obj in blogs %}
+                <article class="card card-product-list">
+                    <div class="row no-gutters">
+                        <aside class="col-md-4 py-3">
+                            <a href="#" class="img-wrap">
+                                <img src="{{obj.image.url}}">
+                            </a>
+                        </aside> <!-- col.// -->
+                        <div class="col-md-8">
+                            <div class="info-main">
+                                <!-- <span class="date text-muted float-md-right">24.04.2020 </span> -->
+                                <div class="mb-2">
+                                    <span class="date text-muted mb-4 px-2">{{obj.created_add}}</span> |
+                                    <span class="date text-muted mb-4 px-2">{{obj.user.username}} </span>
+                                </div>
+                                <a href="#" class="h4 title mb-4" style="font-style: italic;"> {{ obj.title }}  </a>
+                                
+                                <p> {{ obj.body }} </p>
+                                
+                                <button class="button btn btn-primary ml-3 py-2 mt-5">Readme</button>
+                            
+                            </div> <!-- info-main.// -->
+                        </div> <!-- col.// -->
+                    </div> <!-- row.// -->
+                </article> <!-- card-product .// -->
+                {% endfor %}
+                
+            </main>
+            <div class="col-md-4">
+                <div class="banner_blog mb-4">
+                    <!-- ============================ COMPONENT BANNER 8  ================================= -->
+                    <img src="{% static 'images/banners/banner_blog.jpg' %}" class="img-fluid" alt="...">
+                    <!-- ============================ COMPONENT BANNER 8  END .// ================================= -->
+                </div>
+                <div class=" py-2 ">
+                    <header class="section-heading px-2">
+                        <h4 class="section-title" style="color: gray; font-style: italic;">Recend Blog</h4>
+                    </header>
+                    {% for obj in blog_recend %}
+                    <article class="card card-product-list mb-2">
+                        <div class="row no-gutters">
+                            <aside class="col-md-4 py-2">
+                                <img src="{{obj.image.url}}" class="img-fluid ml-2">
+                            </aside> <!-- col.// -->
+                            <div class="col-md-8">
+                                <div class="info-main">
+                                    <!-- <span class="date text-muted float-md-right">24.04.2020 </span> -->
+                                    <a href="#" class="h5 title mb-2 py-2" style="font-style: italic;" > {{ obj.title }}  </a>                        
+                                    <div class="mb-2">
+                                        <span class="date text-muted mb-4 px-2">{{obj.created_add|timesince}} ago </span> |
+                                        <span class="date text-muted mb-4 px-2">{{obj.user.username}} </span>
+                                    </div>
+                                </div> <!-- info-main.// -->
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                    </article> 
+                    {% endfor %}
+                </div>
+                
+            </div> <!-- col.// -->
+        </div> <!-- row.// -->
+    </div>
+</section>
+
+<section class="section-name padding-y py-5 mb-5">
+    <header class="section-heading">
+        <div class="text-center">
+        <h3 class="section-title text-center">Our Team</h3>
+        <p class="text-center">
+            Meet Our Team
+        </p>
+        </div>
+    </header><!-- sect-heading -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="text-center">
+                    <img src="{% static 'images/avatars/avatar.png' %}" class="py-2" alt="">
+                    <h4>John Smith</h4>
+                    <span>Fashion Design</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="text-center">
+                    <img src="{% static 'images/avatars/avatar.png' %}" class="py-2" alt="">
+                    <h4>Christine Wise</h4>
+                    <span>C.E.O</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="text-center">
+                    <img src="{% static 'images/avatars/avatar.png' %}" class="py-2" alt="">
+                    <h4>Sean Robbins</h4>
+                    <span>Manager</span>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="text-center">
+                    <img src="{% static 'images/avatars/avatar.png' %}" class="py-2" alt="">
+                    <h4>Lucy Myers</h4>
+                    <span>Delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block script %}
+{% endblock script %}

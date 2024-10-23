@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Ar Rasyiid | Prodcut Detail {{single_product}}
+{% endblock title %}
+
+{% block head %}
+
+{% endblock head %}
+
+{% block content %}
+
+<section class="section-content padding-y bg ">
+    {% include 'includes/alerts.html' %}
+    <div class="container mb-3">
+        <!-- ============================ COMPONENT 1 ================================= -->
+        <div class="card">
+            <div class="row no-gutters">
+                <aside class="col-md-6">
+                    <article class="gallery-wrap"> 
+                        <div class="img-big-wrap mainImage">
+                            <div>
+                                <a href="{{single_product.images.url}}" data-fancybox="images" data-caption="{{single_product.name}}">        
+                                    <img src="{{single_product.images.url}}">
+                                </a>
+                            </div>
+                        </div> <!-- img-big-wrap.// -->
+                        <div class="thumbs-wrap">
+                            {% for i in product_gallery %}
+                            <a href="{{i.image.url}}" class="item-thumb" data-fancybox="images" data-caption="{{i.alt_text}}"> <img src="{{i.image.url}}"></a>
+                            {% endfor %}
+                        </div> <!-- thumbs-wrap.// -->
+                    </article> <!-- gallery-wrap .end// -->
+                </aside>
+                <main class="col-md-6 border-left">
+                    <div>
+                        
+                        <form action="{% url 'add_cart' single_product.id %}" method="POST">
+                            {% csrf_token %}
+                            <article class="content-body">
+                                <h2 class="title">{{single_product.name}}</h2>
+                                <p class="">{{single_product.description}}</p>
+                                <div class="rating-star mb-2">
+                                    <span>
+                                        <i class="fa fa-star{% if single_product.avrageReview < 0.5 %}-o{% elif single_product.avrageReview >= 0.5 and single_product.avrageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                        <i class="fa fa-star{% if single_product.avrageReview < 1.5 %}-o{% elif single_product.avrageReview >= 1.5 and single_product.avrageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                        <i class="fa fa-star{% if single_product.avrageReview < 2.5 %}-o{% elif single_product.avrageReview >= 2.5 and single_product.avrageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                        <i class="fa fa-star{% if single_product.avrageReview < 3.5 %}-o{% elif single_product.avrageReview >= 3.5 and single_product.avrageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                        <i class="fa fa-star{% if single_product.avrageReview < 4.5 %}-o{% elif single_product.avrageReview >= 4.5 and single_product.avrageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                        <small class="label-rating text-muted ml-3">{{product_view}} reviews</small>
+                                        <small class="label-rating text-muted ml-3">{{single_product.users_wislist.count}} Like</small>
+                                        <small class="label-rating text-success ml-3"> <i class="fas fa-clipboard-check"></i> {{quantityAll}} orders </small>
+                                    </span>
+                                </div>
+                                
+                                <div class="mt-5 mb-4 py-3 bg-light text-dark"> 
+                                    <var class="ml-3 price h4" id="price_id" name="price">Rp. {{single_product.get_price}}</var> 
+                                </div>
+                                
+                                <!-- Varian Color -->
+                                <div class="py-2">
+                                    <h6 class="text-muted">Available Colors</h6>
+                                    <div id="color_id" class="item-option-select">
+                                        {% for variant in variants %}
+                                        {% if variant.varian_category == 'color' %}
+                                        <label class="js-check btn btn-check" >
+                                            <input id="input-color" type="radio" name="color" value="{{variant.variation_value}}"
+                                            required>
+                                            <span >{{variant.variation_value | capfirst }}</span>
+                                        </label>
+                                        {% endif %}
+                                        {% endfor %}
+                                        <label class="js-check btn btn-check disabled">
+                                            <input type="radio" name="option_size" disabled="" value="option1">
+                                            <span>Kosong</span>
+                                        </label>	
+                                    </div>
+                                </div>
+
+                                <!-- Varian Sizes -->
+                                <div class="py-2">
+                                    <h6 class="text-muted">Available Sizes</h6>
+                                    <div id="size_id" class="item-option-select">
+                                        {% for variant in variants %}
+                                        {% if variant.varian_category == 'size' %}
+                                        <label class="js-check btn btn-check">
+                                            <input id="input-size" type="radio" name="size" value="{{variant.variation_value | lower }}" required>
+                                            <span>{{variant.variation_value | capfirst }}</span>
+                                        </label>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div id="stock_id" class="py-2 ml-4"> </div>
+                                <div class="py-2">
+                                    <a href="{% url 'user_wislist' single_product.id %}" class="btn  btn-light">
+                                        {% if user in single_product.users_wislist.all %}
+                                        <i class="fas fa-heart" style="color: #3167eb;;"></i>  
+                                        {% else %}
+                                        <i class="fas fa-heart"></i>  
+                                        {% endif %}
+                                    </a>
+                                    {% if item.stock <= 0 %}
+                                        <h6 class="text-danger"> Out Of Stock </h6>
+                                    {% else %}
+                                        <button type="submit" class="btn  btn-primary"> <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i>  </button>
+                                        <a class="btn btn-outline-primary" href="https://linktr.ee/ar_rasyiid"><i class="fa fa-shopping-cart"></i></i> Buy</a>
+                                        <a class="btn btn-outline-success" href="http://wa.me/+6281211143508"><i class="fa fa-whatsapp" ></i> Chat</a>
+                                    {% endif %}
+                                </div>
+                            </article> <!-- product-info-aside .// -->
+                        </form>
+                        
+                    </div>
+                </main> <!-- col.// -->
+            </div> <!-- row.// -->
+        </div> <!-- card.// -->
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+        
+    </div> <!-- container .//  -->
+   
+    <div class="container">
+        <div class="row">
+            <main class="col-md-9">
+                <!-- ============================ COMPONENT 1  ================================= -->
+                <article class="card card-product-list">
+                    <div class="card-body">
+                    <div class="row">
+                        <article class="content-body">
+                            <div class="bg-light text-dark">
+                                <h4 class="title ml-3 mb-4 py-3"> Description</h4>
+                            </div>
+                            <p class="">{{single_product.long_description | safe}}</p>
+                        </article>
+                    </div> <!-- row.// -->
+                    </div> <!-- card-body .// -->
+                </article>
+                <!-- ============================ COMPONENT 1  END .// ================================= -->
+            <!-- ============================ COMPONENT 3 .//END ================================= -->
+            </main> <!-- col.// -->
+            
+            <aside class="col-md-3">
+            <!-- COMPONENTS SIDEBAR -->
+            <output>
+            <div class="card">
+                <article class="card card-product-list">
+                    <h6 class="title mb-3 mt-3 ml-4">Produk Pilihan Lainnya </h6>
+                    <div class="card-body">
+                        {% for obj in products %}
+                            <div class="card card-product-grid">
+                                <a href="{{  obj.get_url }}" class="img-wrap"> <img src="{{ obj.images.url }}"> </a>
+                                <figcaption class="info-wrap">
+                                    <a href="{{obj.get_url}}" class="title">{{obj.name}}</a>
+                                        <div class="price mt-2">
+                                            <span class="price">Rp. {{obj.get_price}}</span>
+                                            <!-- <del class="price-old">Rp. 150680</del> -->
+                                        </div> <!-- price-wrap.// -->
+                                    <div class="rating-star">
+                                        <span>
+                                            <i class="fa fa-star{% if obj.avrageReview < 0.5 %}-o{% elif obj.avrageReview >= 0.5 and obj.avrageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if obj.avrageReview < 1.5 %}-o{% elif obj.avrageReview >= 1.5 and obj.avrageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if obj.avrageReview < 2.5 %}-o{% elif obj.avrageReview >= 2.5 and obj.avrageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if obj.avrageReview < 3.5 %}-o{% elif obj.avrageReview >= 3.5 and obj.avrageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                            <i class="fa fa-star{% if obj.avrageReview < 4.5 %}-o{% elif obj.avrageReview >= 4.5 and obj.avrageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                </figcaption>
+                            </div>
+                        {% endfor %}
+        
+                    </div> <!-- card-body.// -->
+                </article> <!-- card card-product-list  .// -->
+
+            </div> <!-- card.// -->
+            </output>
+            <!-- COMPONENTS SIDEBAR END .// -->
+            </aside>
+        </div> <!-- row.// -->
+    </div>
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+
+
+<!-- Review -->
+<section class="section-name padding-y bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <header class="section-heading">
+                    <h5>Customer Reviews </h5>
+                    <span>
+                        <div class="rating-star">
+                            <span>
+                                <i class="fa fa-star{% if single_product.avrageReview < 0.5 %}-o{% elif single_product.avrageReview >= 0.5 and single_product.avrageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.avrageReview < 1.5 %}-o{% elif single_product.avrageReview >= 1.5 and single_product.avrageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.avrageReview < 2.5 %}-o{% elif single_product.avrageReview >= 2.5 and single_product.avrageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.avrageReview < 3.5 %}-o{% elif single_product.avrageReview >= 3.5 and single_product.avrageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.avrageReview < 4.5 %}-o{% elif single_product.avrageReview >= 4.5 and single_product.avrageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <span class="text-muted ml-3"> {{single_product.countReview}} Reviews</span>
+                            </span>
+                        </div>
+                    </span>
+                </header>
+                {% for review in reviews %}
+                <article class="box mb-3">
+                    <div class="icontext w-100">
+                        <img src="{{review.user.userprofile.profile_picture.url}}" class="img-xs icon rounded-circle">
+                        <div class="text">
+                            <span class="date text-muted float-md-right">{{review.updated_date}}</span>  
+                            <h6 class="mb-1">{{review.user.full_name}} </h6>
+                            <div class="rating-star">
+                                <span>
+                                    <i class="fa fa-star{% if review.rating == 0.5 %}-half-o{% elif review.rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.rating == 1.5 %}-half-o{% elif review.rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.rating == 2.5 %}-half-o{% elif review.rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.rating == 3.5 %}-half-o{% elif review.rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.rating == 4.5 %}-half-o{% elif review.rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                            <small class="text-muted">{{review.product}}</small><br>
+                            <small class="text-muted">
+                                {% for varian in review.item.variation_set.all %}
+                                    {{ varian.variation_value | capfirst }}
+                                {% endfor %}
+                            </small>
+                        </div>
+                    </div> <!-- icontext.// -->
+                    <div class="mt-3">
+                        <h6>{{review.subject}}</h6>
+                        <p>
+                            {{review.review}}
+                        </p>	
+                    </div>
+                </article>
+                {% endfor %}
+
+            </div> <!-- col.// -->
+        </div> <!-- row.// -->  
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function() {
+        // Init fancyBox
+        $().fancybox({
+            selector : '.slick-slide:not(.slick-cloned)',
+            hash     : false
+        });
+        // Init Slick
+        $(".main-slider").click({
+            slidesToShow   : 3,
+            slidesToScroll : 3,
+            infinite : true,
+            dots     : false,
+            arrows   : false,
+            responsive : [
+                {
+                breakpoint : 960,
+                settings : {
+                    slidesToShow   : 1,
+                    slidesToScroll : 1
+                }
+                }
+            ]
+        });
+
+        // colors input click event
+        urlColor = `{% url 'get_sizes' %}`;
+        $('#color_id').on('change', function() {
+            color = $("input[name='color']:checked").val()
+            console.log('variant :', color);
+            $.ajax({
+                url: urlColor,
+                type: "GET",
+                data : { 
+                    color: color,
+                    item_id : '{{single_product.id}}',
+                },
+                success: function(html) {
+                    $('#size_id').empty();
+                    $('#stock_id').empty();
+                    $('#price_id').text('Rp. {{single_product.get_price}}');
+                     // Populate sizes and stocks
+                    $.each(html.data, function(key, size) {
+                        console.log('size :',size);
+                        $('#size_id').append(
+                            '<label class="js-check mr-2 btn btn-check">\
+                            <input type="radio" name="size" value="' + size.variation_value.toLowerCase() + '" required>\
+                            <span> ' + size.variation_value.toUpperCase() + ' </span>\
+                            </label>'
+                        );
+                    });
+                },
+                error : function (data) {
+                    console.log('Error:', data);
+                }
+            });
+        
+        });
+
+        urlPrice = `{% url 'get_price_item' %}`;
+        // click input radio on size active
+        $("#size_id").on('change', function(){
+            $(this).children('label:has(input:checked)').addClass('active');
+            $(this).children('label:has(input:not(:checked))').removeClass('active');
+            size = $("input[name='size'][type='radio']:checked");
+            $.ajax({
+                url: urlPrice,
+                type: "GET",
+                data : { 
+                    color: color,
+                    size: size.val(),
+                    item_id : '{{single_product.id}}',
+                },
+                success: function(html) {
+                    $('#stock_id').empty();
+                    
+                    $.each(html.data, function(key, item) {
+                        $('#price_id').text('Rp. '+item.price);
+                        $('#stock_id').append(
+                            '<h6 class="text-muted">Available Stock</h6>\
+                            <h6 class="text-muted">'+ item.stock +'</h6>');
+                        
+                    });
+                },
+                error : function (data) {
+                    console.log('Error:', data);
+                }
+            });
+        })
+    });
+</script>
+{% endblock script %}

@@ -1,0 +1,354 @@
+{% extends 'appadmin/master.html' %}
+{% load static %}
+{% block title %}
+    Admin | Category {{title}}
+{% endblock title %}
+
+{% block stylesheets %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
+/>
+{% endblock stylesheets %}
+
+{% block content %}
+
+{% include 'appadmin/include/alerts.html' %}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <nav aria-label="breadcrumb ">
+        <ol class="breadcrumb breadcrumb-style1 p-2">
+          <li class="breadcrumb-item">
+            <a href="{% url 'dashboard_admin' %}" style="font-size: large;">Home</a>
+          </li>
+          {% if title == 'Add' or title == 'Edit'%}
+          <li class="breadcrumb-item">
+            <a href="{% url 'category' %}" style="font-size: large;">Category</a>
+          </li>
+          <li class="breadcrumb-item active" style="font-size: large;">{{title}}</li>
+          {% else %}
+          <li class="breadcrumb-item active" style="font-size: large;">Category</li>
+          {% endif %}
+        </ol>
+    </nav>
+
+    <div class="row">
+        <form action="." method="POST" enctype="multipart/form-data">   
+            {% csrf_token %}             
+            <div class="row">
+                <div class="col-lg-8 mb-2">
+                    <div class="card">
+                        <h5 class="card-header">{{title}} Category {{cat.category_name}}</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group mb-3">
+                                    <label for="name-text-input" class="form-label">Name Category</label>
+                                    <!-- <input class="form-control" type="text" placeholder="Nama Product" > -->
+                                    {{category.category_name}}
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="parent-text-input" class="form-label">Parent</label>
+                                    <!-- <input class="form-control" type="text" placeholder="Nama Product" > -->
+                                    {{category.parent}}
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="example-text-input" class="form-label">Description</label>
+                                    <!-- <input class="form-control" type="text" placeholder="Short Description" > -->
+                                    {{category.description}}
+                                </div>
+                            </div>   
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-2">
+                    <div class="card card-profile">
+                        <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
+                            <div class="text-center mt-4">
+                                <h6 class="text-bold font-weight-bolder opacity-8">Galery Category</h6>
+                            </div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="row mb-2">
+                                <p class="">Thumnail</p>
+                                <div id="imageCurrently" class="col row justify-content-center text-center" hidden >
+                                    <a id="btnThumnailRead"  href="{{cat.cat_image.url}}" data-fancybox="gallery" data-target="#modalthumnailRead" data-caption="{{cat.category_name}}">
+                                        <img id="thumnailimageRead" src="{{cat.cat_image.url}}" alt="profile_image" class="border-radius-lg shadow-sm" style="height: 100px; width: 100px;">
+                                    </a>
+                                    <span class="text-sm opacity-8 mt-3">Currently</span>
+                                </div>
+                                <div id="imageNew" class="col row justify-content-center text-center" hidden >
+                                    <a id="btnThumnailNon">
+                                        <img id="thumnailimageNon" src="" alt="profile_image" class="border-radius-lg shadow-sm" style="height: 100px; width: 100px;">
+                                    </a>
+                                </div>
+                                <input class="form-control form-control-sm mt-3 mb-3" id="formFileImage" type="file" name="cat_image" value="{{cat.cat_image}}">
+                                <button type="button" class="btn btn-outline-secondary thumbail-image-reset mb-4">
+                                    <span class="d-none d-sm-block">Reset</span>
+                                </button>
+                            </div>
+
+                            <div class="row">
+                                <p class="">Video</p>
+                                <div id="videoCurrently" class="col row justify-content-center text-center" hidden>
+                                    <a id="btnvideoReady" href="" data-target="#modalVideoRead" data-fancybox="video" data-type="html5video" class="text-center">
+                                        <div id="iconCurrently" class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle" style="position: absolute;">
+                                            <i class="ni ni-button-play text-lg opacity-10" aria-hidden="true"></i>
+                                        </div>
+                                        <img id="thumnailVideoRead" src="{{cat.cat_image.url}}" alt="profile_image" class="border-radius-lg shadow-sm" style="height: 100px; width: 100px;">
+                                    </a>
+                                    <span class="text-sm opacity-8 mt-2">Currently</span>
+                                </div>
+                                <div id="videoNew" class="col row justify-content-center text-center" hidden >
+                                    <a id="btnvideoNone" data-fancybox data-type="html5video" data-width="640" data-height="360">
+                                        <div id="iconNew" class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle" style="position: absolute;">
+                                            <i class="ni ni-button-play text-lg opacity-10" aria-hidden="true"></i>
+                                        </div>
+                                        <img id="thumnailVideoNon" alt="profile_image" class="border-radius-lg shadow-sm" style="height: 100px; width: 100px;">
+                                    </a>
+                                </div>
+                                <input class="form-control form-control-sm mt-3 mb-3" id="formFileSmVideo" type="file" name="video_file" value="{{ cat.video_file }}">
+                                <button type="button" class="btn btn-outline-secondary video-reset mb-4">
+                                    <span class="d-none d-sm-block">Reset</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container-sm">
+                    <button class="btn btn-primary btn-sm ms-auto" type="">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script>
+    //if btnvideoReady ready video url
+    var title = '{{title}}';
+    video = '{% if cat.video_files %} cat.video_file.url {% endif %}';
+
+    $().fancybox({
+        selector : '.slick-slide:not(.slick-cloned)',
+        hash     : false
+    });
+    
+
+    //Fancybox.bind('[data-fancybox="gallery"]', {
+    //    //
+    //});
+    
+    Fancybox.bind('[data-fancybox="video"]', {
+        src: video,
+        type: 'iframe',
+        opts: {
+            width: 640,
+            height: 480,
+            iframe: {
+                // Iframe properties like src, allowfullscreen, etc.
+                allow: 'autoplay; fullscreen; picture-in-picture'
+            }
+        }, 
+        loop: true,
+            buttons: [
+                true, // Boolean: Show close button
+                true, // Boolean: Show next button
+                true, // Boolean: Show previous button
+                'zoom', // Boolean: Show zoom button
+                true, // Boolean: Show full screen button
+                'close' // String: Text for close button
+            ]
+    });
+
+    //check image conten
+    if ( title === 'Edit') {
+        $('#imageCurrently').removeAttr('hidden');
+        $('#videoCurrently').removeAttr('hidden');
+    }
+    
+    // form formFileImage loading
+    $("#formFileImage").change(function() {
+        readURL(this);
+        $('#imageNew').removeAttr('hidden');
+    });
+
+    function readURL(input) {
+        //check type input validation image element 
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/png',];
+        if (!allowedTypes.includes(input.files[0].type)) {
+            alert('Format file gambar yang diperbolehkan hanya JPEG, JPG, PNG AND GIF');
+            return false;
+            //remove btn from
+            $('#btnThumnailNon').hide();
+            $('#formFileImage').empty();
+
+        }
+
+        // check input image size
+        if (input.files[0].size > 1242880) {
+            alert('File gambar terlalu besar, maksimal ukuran file gambar adalah 1MB');
+            return false;
+        }
+        //check input render mode
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#thumnailimageNon').attr('src', e.target.result);
+                $('#btnThumnailNon').attr('href', e.target.result);
+                $('#btnThumnailNon').attr('data-fancybox', 'imagNew');
+
+                
+                //$('#thumnailVideoNon').attr('src', e.target.result).hide();
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // click btnThumnailNon button show thumbnail image with Fancybox thumbnail imaga
+    //$('#btnThumnailNon').click(function() {
+    //    Fancybox.show([{
+    //        src: $('#thumnailimageNon').attr('src'),
+    //        type: 'image',
+    //        caption: 'Thumnail Image'
+    //        }], {
+    //            loop: true,
+    //            buttons: [
+    //                true, // Boolean: Show close button
+     //               true, // Boolean: Show next button
+     //               true, // Boolean: Show previous button
+    //                'zoom', // Boolean: Show zoom button
+    //                true, // Boolean: Show full screen button
+    //                'close' // String: Text for close button
+    //            ]
+    //        });
+    //});
+    
+    // reset thumnail image non loading;
+    $('.thumbail-image-reset').click(function() { 
+        $('#thumnailimageNon').removeAttr('src');
+
+        $('#btnThumnailNon').removeAttr('href');
+        $('#btnThumnailNon').removeAttr('data-fancybox', );
+
+        $('#formFileImage').val('');
+        $('#formFileImage').empty();
+
+        $('#imageNew').attr('hidden', 'true');
+    });
+
+    // input video fancybox
+    $("#formFileSmVideo").change(function() {
+        // check input video
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.readAsDataURL(this.files[0]);
+        }
+        
+        //check input video file exists
+        if (!this.files[0].type.match('video/.*')) {
+            alert('Format file video yang diperbolehkan hanya MP4, AVI, MPEG4');
+            return false;
+        }
+
+        // check type input validation video element 
+        var allowedTypes = ['video/mp4', 'video/avi', 'video/mpeg4'];
+        if (!allowedTypes.includes(this.files[0].type)) {
+            alert('Format file video yang diperbolehkan hanya MP4, AVI, MPEG4');
+            return false;
+            // remove btn from
+            $('#btnvideoNone').hide();
+            $('#formFileSmVideo').val('');
+            $('#formFileSmVideo').empty();
+        }
+
+        // check validation duration video 
+        var video = document.createElement('video');
+        video.src = URL.createObjectURL(this.files[0]);
+        video.onloadedmetadata = function() {
+            var duration = this.duration;
+            if (duration > 180) {
+                alert('Durasi video maksimal 3 menit');
+                return false;
+            }
+        }
+        video.onerror = function() {
+            alert('Error: File video tidak dapat diload');
+            return false;
+        }
+        video.load();  // loads metadata of the video, but does not start it.  // If you want to play the video, you should call play() method.  // If you want to pause the video, you should call pause() method.  // If you want to stop the video, you should call canplaythrough() method.  // If you want to seek to a specific position, you should call seek() method.  // If you want to
+
+        // check input video size 
+        if (this.files[0].size > 20971520) {
+            alert('File video terlalu besar, maksimal ukuran file video adalah 20MB');
+            return false;
+        }
+        // show btnThumnailNon
+        $('#videoNew').removeAttr('hidden');
+        //create src file video Fancybox with video
+        var src = URL.createObjectURL(this.files[0]);
+
+        $('#btnvideoNone').attr('href', src);
+        $('#btnvideoNone').attr('data-fancybox', 'video');
+
+        // create thumbnail video canvas element and attach it to the video element
+
+        function createThumbnail(video) {
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL();
+        }
+
+        video.src = URL.createObjectURL(this.files[0]);
+        video.load();  // loads metadata of the video, but does not start it.  // If you want to play the video, you should call play() method.  // If you want to pause the video, you should call pause() method.  // If you want to stop the video, you should call () method
+        
+        var playVideo = video.play();
+        if (typeof playVideo!== 'undefined') {
+            playVideo.then(_ => {
+                // Automatic playback started!
+                // Show a UI element to let the user manually stop playback.
+                video.pause();
+            }).catch(error => {
+                // Automatic playback failed.
+            });
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        var ctx = canvas.getContext('2d'); //
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        var thumbnail = canvas.toDataURL();
+        $('#thumnailVideoNon').attr('src', thumbnail);
+
+        video.addEventListener('loadedmetadata', function() {
+            var thumbnail = createThumbnail(video);
+            $('#thumnailVideoNon').attr('src', thumbnail);
+        });        
+    });
+
+    //Reset the video player New 
+    $('.video-reset').click(function () {
+        $('#thumnailVideoNon').removeAttr('src');
+        $('#btnvideoNone').removeAttr('src');
+        $('#btnvideoNone').removeAttr('data-fancybox');
+
+        
+        $('#formFileSmVideo').val('');
+        $('#formFileSmVideo').empty();
+
+        $('#videoNew').attr('hidden', 'true');
+        
+    });
+
+</script>
+{% endblock javascripts %}

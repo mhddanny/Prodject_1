@@ -1,0 +1,44 @@
+<ul class="nav nav-tabs card-header-tabs">
+    <li class="nav-item">
+        <a class="nav-link  {% if '/orders/my_orders/pending/' == request.path %}
+        active
+        {% endif %}" aria-current="true" href="{% url 'pending' %}">
+            Belum Bayar
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if '/orders/my_orders/' == request.path %}
+            active
+            {% endif %}" href="{% url 'my_orders' %}">
+            Dikemas
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if '/orders/my_orders/on_the_way/' == request.path %}
+            active
+            {% endif %}" href="{% url 'on_the_way' %}">
+            Di Kirim
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if '/orders/my_orders/delivered/' == request.path %}
+            active
+            {% endif %}" href="{% url 'delivered' %}">
+            Selesai
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if '/orders/my_orders/cencelled/' == request.path %}
+            active
+            {% endif %}" href="{% url 'cencelled' %}">
+            Cencell
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  {% if '/orders/my_orders/all_order/' == request.path %}
+        active
+        {% endif %}" aria-current="true" href="{% url 'all_order' %}">
+            Semua
+        </a>
+    </li>
+</ul>

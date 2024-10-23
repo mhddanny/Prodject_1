@@ -1,0 +1,129 @@
+{% extends 'appadmin/base.html' %}
+{% load static %}
+{% block title %}
+    Admin | Blog All
+{% endblock title %}
+
+{% block content %}
+<div class="header bg-primary">
+    <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center">
+              <div class="col-lg-10 col-8">
+                  <nav aria-label="breadcrumb" class="d-md-inline-block">
+                      <ol class="breadcrumb ">
+                          <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li>
+                          <li class="breadcrumb-item active"><a href="{% url 'blog_list' %}">Blog</a></li>
+                          <li class="breadcrumb-item active" aria-current="page"> All</li>
+                      </ol>
+                  </nav>
+              </div>
+              <div class="col-lg-2 col-4 text-left">
+                  <a href="" type="button" class="btn bg-gradient-success font-weight-bold text-white">
+                      <i class="fas fa-plus-circle me-1"></i> Add Product
+                  </a>
+              </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                  <h6>Blog post</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                  <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                      <thead>
+                        <tr>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User</th>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Title</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for obj in blog %}
+                        <tr>
+                          <td>
+                            <div class="d-flex px-2">
+                              <div>
+                                <img src="{{obj.user.userprofile.profile_picture.url}}" class="avatar avatar-sm rounded-circle me-2" alt="spotify">
+                              </div>
+                              <div class="my-auto">
+                                <h6 class="mb-0 text-sm">{{obj.user.username}}</h6>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <span class="text-xs font-weight-bold">{{obj.title}}</span>
+                          </td>
+                          <td class="align-middle">
+                            <a href="" class="btn btn-link text-secondary mb-0">
+                              <i class="far fa-edit text-xs" aria-hidden="true"></i>
+                            </a>
+                            <a href="#" class="btn btn-link text-secondary mb-0">
+                              <i class="fas fa-trash-alt text-xs" aria-hidden="true"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            <!-- Pagination -->
+            <!-- {% if category.has_other_pages %}
+            <ul class="pagination pagination-info justify-content-center">
+                {% if category.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ category.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true"><i class="ni ni-bold-left" aria-hidden="true"></i></span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#link" aria-label="Previous">
+                        <span aria-hidden="true"><i class="ni ni-bold-left" aria-hidden="true"></i></span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for i in category.paginator.page_range %}
+                {% if category.number == i %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#link">{{i}}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{i}}">{{i}}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if category.has_next %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ category.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true"><i class="ni ni-bold-right" aria-hidden="true"></i></span>
+                </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#link" aria-label="Next">
+                        <span aria-hidden="true"><i class="ni ni-bold-right" aria-hidden="true"></i></span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            {% endif %} -->
+        </div>
+     </div>
+    </div>
+    
+
+{% endblock %}

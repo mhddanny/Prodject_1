@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load mptt_tags %}
+{% block title %}
+    Ar Rasyiid | Store
+{% endblock title %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-pagetop" style="background-color: rgb(233, 233, 233);">
+    <div class="container">
+        {% if 'search' in request.path %}
+        <h2 class="title-page">Search Result</h2>
+        <nav class="d-flex mb-2">
+            <h6 class="mb-0">
+              <a href="{% url 'home' %}" class="title-page">Home</a>
+              <span class="text-black-50 mx-2"> > </span>
+              <a href="{% url 'store' %}" class="title-page">Store</a>
+              <span class="text-black-50 mx-2"> > </span>
+              <a class="title-page ">{{keyword | capfirst}}</a>
+            </h6>
+          </nav>
+        {% else %}
+        <h2 class="title-page">Our Store</h2>
+        <nav class="d-flex mb-2">
+            <h6 class="mb-0">
+              <a href="{% url 'home' %}" class="title-page">Home</a>
+              <span class="text-black-50 mx-2"> > </span>
+              <a class="title-page ">Store</a>
+            </h6>
+          </nav>
+        {% endif %}
+        
+    </div> <!-- container //  -->
+</section>
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y bg">
+    <div class="container">
+        <div class="row">
+            <aside class="col-md-3">
+                <div class="card">
+                    <!-- Category -->
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="title-page">
+                                <i class="icon-control fa fa-chevron-down"></i>
+                                <h6 class="title">Categories</h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_1">
+                            <div class="card-body">
+                                <ul class="menu-category">
+                                    <li><a href="{% url 'store' %}">All Category</a></li>
+                                    {% recursetree categories %}
+                                    <li class="has-submenu">
+                                        <a href="{{node.get_url}}">{{node.category_name}}</a>
+                                        {% if not node.is_leaf_node %}
+                                            <ul class="submenu">
+                                                {{ children }}
+                                            </ul>
+                                        {% endif %}
+                                    </li>
+                                    {% endrecursetree %}
+                                </ul>
+                            </div>
+                        </div>
+                    </article> <!-- filter-group Category .// -->  
+                    <!-- Size -->
+                    <article class="filter-group">
+                        <header class="card-header">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_aside2" aria-expanded="true" class="title-page">
+                                <i class="icon-control fa fa-chevron-down"></i>
+                                <h6 class="title">Size </h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_aside2">
+                            <div class="card-body">
+                                {% for size in sizes %}
+                                <label class="checkbox-btn size-id"> 
+                                    <a href="/store/?size={{size.variation_value}}">
+                                        <input type="checkbox" name="size" value="{{ size.variation_value }}" 
+                                        {% if request.GET.size == size.variation_value %}    
+                                        checked
+                                        {% endif %}
+                                        >
+                                        <span class="btn btn-light"> {{ size.variation_value | capfirst }} </span>
+                                    </a>
+                                </label>
+                                {% endfor %}
+                                
+                            </div> <!-- card-body.// -->
+                        </div>
+                    </article>
+
+                </div> <!-- card.// -->
+                
+                
+            </aside> <!-- col.// -->
+
+            <main class="col-md-9">
+                <header class="border-bottom mb-4 pb-3">
+                    <div class="form-inline">
+                        <span class="mr-md-auto"><b>{{product_count}}</b> Items found </span>
+                        <!-- <label class="checkbox-btn mr-2"> 
+                            <a href="/store/?product=pop{{pop}}">
+                                <input type="checkbox" name="pop" value="{{pop}}" 
+                                {% if request.GET.pop == pop %}    
+                                checked
+                                {% endif %}
+                                >
+                                <span class="btn btn-outline-primary">Populer </span>
+                            </a>
+                        </label>
+                        <a href="#" class="btn btn-outline-primary mr-2">Terlaris</a> -->
+                        <div class="btn-group mr-2">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                              Filter By
+                            </button>
+                            <div class="dropdown-menu">
+                              <a class="dropdown-item" href="/store/?product=asc{{asc}}">Harga Terendah ke Tertingi</a>
+                              <a class="dropdown-item" href="/store/?product=dsc{{dsc}}">Harga Tertinggi ke Terendah</a>
+                            </div>
+                        </div>
+                        <!-- <select class="mr-2 form-control">
+                            <option>Harga: Default</option>
+                            <option>Harga: <a href="#" class="" type="button">Terendah ke Tertinggi</a></option>
+                            <option>Harga: <a href="#" type="button">Tertinggi ke Terendah</a></option>
+                        </select> -->
+                        <!-- <div class="btn-group">
+                            <a href="#" class="btn btn-outline-secondary active" data-toggle="tooltip" title="" data-original-title="List view"> 
+                                <i class="fa fa-bars"></i></a>
+                            <a href="#" class="btn  btn-outline-secondary" data-toggle="tooltip" title="" data-original-title="Grid view"> 
+                                <i class="fa fa-th"></i></a>
+                        </div> -->
+                    </div>
+                </header>
+                {% if products %}
+                    <div class="row">
+                        {% for obj in products %}
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap"> 
+                                    <a href="{{ obj.images.url }}" data-fancybox data-caption="{{obj.name}}"><img src="{{ obj.images.url }}"></a>
+                                    <a class="btn-overlay" href="{{ obj.images.url }}" data-fancybox data-caption="{{obj.name}}">
+                                        <i class="fa fa-search-plus"></i> 
+                                        Quick view
+                                    </a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="{{obj.get_url}}" class="title">{{obj.name|truncatechars:29}}</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">Rp. {{obj.get_price}}</span>
+                                            <!-- <del class="price-old">Rp. 150680</del> -->
+                                        </div> <!-- price-wrap.// -->
+                                        <div class="rating-star">
+                                            <span>
+                                                <i class="fa fa-star{% if obj.avrageReview < 0.5 %}-o{% elif obj.avrageReview >= 0.5 and obj.avrageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if obj.avrageReview < 1.5 %}-o{% elif obj.avrageReview >= 1.5 and obj.avrageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if obj.avrageReview < 2.5 %}-o{% elif obj.avrageReview >= 2.5 and obj.avrageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if obj.avrageReview < 3.5 %}-o{% elif obj.avrageReview >= 3.5 and obj.avrageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if obj.avrageReview < 4.5 %}-o{% elif obj.avrageReview >= 4.5 and obj.avrageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <a href="{{obj.get_url}}" class="btn btn-block btn-primary"><i class="fa fa-regular fa-eye"></i>&nbsp; View Detail </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->    
+                        {% endfor %}
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap"> 
+                                    <span class="badge badge-danger"> NEW </span>
+                                    <img src="images/items/1.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Great item name goes here</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                            <del class="price-old">$1980</del>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div> <!-- row end.// -->
+                {% else %}      
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <div class="mt-4 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="130" height="130" fill="currentColor" class="bi bi-emoji-tear" viewBox="0 0 16 16" style="color: #0000FF;">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                    <path d="M6.831 11.43A3.1 3.1 0 0 1 8 11.196c.916 0 1.607.408 2.25.826.212.138.424-.069.282-.277-.564-.83-1.558-2.049-2.532-2.049-.53 0-1.066.361-1.536.824q.126.27.232.535.069.174.135.373ZM6 11.333C6 12.253 5.328 13 4.5 13S3 12.254 3 11.333c0-.706.882-2.29 1.294-2.99a.238.238 0 0 1 .412 0c.412.7 1.294 2.284 1.294 2.99M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5m4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5m-1.5-3A.5.5 0 0 1 10 3c1.162 0 2.35.584 2.947 1.776a.5.5 0 1 1-.894.448C11.649 4.416 10.838 4 10 4a.5.5 0 0 1-.5-.5M7 3.5a.5.5 0 0 0-.5-.5c-1.162 0-2.35.584-2.947 1.776a.5.5 0 1 0 .894.448C4.851 4.416 5.662 4 6.5 4a.5.5 0 0 0 .5-.5"/>
+                                </svg>
+                            </div>
+                            <h2 class="">Upss...!!!<br>The product is out of stock</h2>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <nav class="mt-4" aria-label="Page navigation sample">
+                {% if products.has_other_pages %}
+                    <ul class="pagination justify-content-center">
+                        {% if products.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                        {% endif %}
+
+                        {% for i in products.paginator.page_range %}
+                            {% if products.number == i %}
+                            <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if products.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">Next</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+                </nav>
+            </main> <!-- col.// -->
+        </div>
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        // Init fancyBox
+        $().fancybox({
+            selector : '.slick-slide:not(.slick-cloned)',
+            hash     : false
+        });
+
+
+    });
+</script>
+{% endblock script %}

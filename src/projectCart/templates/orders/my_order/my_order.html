@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{title}}
+{% endblock title %}
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+        <div class="row">
+            {% include 'accounts/dashboard_slide.html' %}
+            <main class="col-md-9">
+                <div class="card mb-2">
+                    <div class="card-body d-flex align-items-center">
+                        <nav class="flex-fill"> 
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+                        </ol>  
+                        </nav> <!-- col.// -->
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        {% include 'orders/my_order/navbar/header.html' %}
+                    </div>
+                    <div class="card-body">
+                        {% if not orders %}
+                            <article class="card mb-2">
+                                <div class="card-body">
+                                    <h4 class="text-center">Your Shopping Order Is Empty</h4>
+                                    <br>
+                                    <div class="text-center">
+                                        <a href="{% url 'store' %}" class="btn btn-primary">Continue Shopping</a>
+                                    </div>
+                                </div>
+                            </article>
+                        {% else %}
+                            {% for obj in orders %}
+                            <div class="card mb-3">
+                                <header class="card-header">
+                                    <ul class="row mt-2 mb-2">
+                                        <li class="col-md-4 text-left">
+                                            <strong class="d-inline-block mr-3">Order ID: {{obj.order_number}}</strong>
+                                        </li>
+                                        <li class="col-md-4 text-left">
+                                            <i class="fa fa-calendar-alt"></i>
+                                            <span class="">{{obj.created_at}}</span>
+                                        </li>
+                                        <li class="col-md-4 text-right">
+                                            <a href="{% url 'order_detail' obj.order_number %} " target="_blank" class="btn btn-sm btn-outline-gray"> Details </a>
+                                            {% if obj.status == 'PENDING' or obj.status == 'CONFIRM' or obj.status == 'ON_THE_WAY' or obj.status == 'DELIVERED' %}
+                                            {% csrf_token %}
+                                            <a href="{% url 'batal_order' obj.order_number %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure want to batal this my order ?')">Batal</a>
+                                                {% if obj.status == 'ON_THE_WAY' or obj.status == 'DELIVERED' %}
+                                                    <a href="{% url 'order_accept' obj.order_number %}" class="btn btn-sm btn-outline-success" onclick="return confirm('Are you sure want to accept this my order ?')">Accept</a>
+                                                {% endif %}
+                                            {% elif obj.status == 'COMPLETED' %}
+                                            <a href="{% url 'get_review' obj.order_number %}" class="btn btn-sm btn-warning">Review</a>
+                                            {% endif %}
+
+                                        </li>
+                                    </ul>
+                                </header>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <h6 class="text-muted">Shipping Address</h6>
+                                            <p>
+                                                Status: 
+                                                <span class=" {% if obj.status == 'PENDING' %}badge badge-warning {% elif obj.status == 'CANCELLED' %} badge badge-danger  {% elif obj.status == 'CONFIRM' %} badge badge-primary {% elif obj.status == 'ON_THE_WAY' %} badge badge-info {% else %} badge badge-success {% endif %}">
+                                                    {{obj.status}} 
+                                                </span><br>
+                                                Name: {{obj.address.full_name}} <br>
+                                                Phone: {{obj.address.phone}}, Email: {{obj.address.email}} <br>
+                                                Jl: {{obj.address.full_address}}<br>
+                                                Province: {{obj.address.district.province.name}}, {{obj.address.district.city.area}}: {{obj.address.district.city.name}}, {{obj.address.district.name}}<br>
+                                                P.O. Box: {{obj.address.district.city.post_code}}<br>
+                                                
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6 class="text-muted">Payment</h6>
+                                            <!-- <span class="text-success">
+                                                <i class="fab fa-lg fa-cc-visa"></i>
+                                                {{obj.order.payment.payment_method}}  **** 4216  
+                                            </span> -->
+                                            {% if obj.payment.payment_method == 'bca_VA' %}
+                                            <img src="{% static 'images/icons/pembayaran-bca.png' %}" style="width: 50px;">
+                                            {% elif obj.payment.payment_method == 'bni_VA' %}
+                                            <img src="{% static 'images/icons/pembayaran-bni.png' %}" style="width: 50px;">
+                                            {% elif obj.payment.payment_method == 'bri_VA' %}
+                                            <img src="{% static 'images/icons/pembayaran-bri.png' %}" style="width: 50px;">
+                                            {% else %}
+                                            <img src="{% static 'images/icons/pembayaran-mandiri.png' %}" style="width: 50px;">
+                                            {% endif %}
+                                            <p>status : 
+                                                <span class=" {% if obj.payment.status == 'pending' %}badge badge-warning {% elif obj.payment.status == 'cancel' or obj.payment.status == 'denny' or obj.payment.status == 'expire' %} badge badge-danger {% else %} badge badge-success {% endif %}">
+                                                {{ obj.payment.status }}
+                                                </span><br>
+                                                Subtotal: Rp. {{obj.order_total}}<br>
+                                                Tax: Rp. {{obj.tax}} <br>
+                                                Cost :  Rp. {{obj.orderdelivery.cost}} <br>
+                                                <span class="b">Total:  Rp. {{obj.payment.amount_paid}} </span>
+                                            </p>
+                                        </div>
+                                    </div> <!-- row.// -->
+                                
+                                    <div class="table-responsive">
+                                        {% for pro in obj.orderproduct_set.all %}
+                                        <table class="table table-hover2">                                    
+                                            <tr>
+                                                <td width="65">
+                                                    <img src="{{pro.product.product.images.url}}" class="img-xs border">
+                                                </td>
+                                                <td> 
+                                                    <p class="title mb-0">{{pro.product.product.name}}</p>
+                                                    <var class="price text-muted">Rp. {{pro.product_price}}</var>
+                                                </td>
+                                                <td> 
+                                                    <var class="price text-muted">
+                                                        {% if pro.variation.all %}
+                                                            {% for i in pro.variation.all %}
+                                                                {{ i.varian_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
+                                                            {% endfor %} 
+                                                        {% endif %} x {{pro.quantity}} 
+                                                    </var>
+                                                </td>
+                                                <td class="text-center" width="250"> 
+                                                    {% if obj.status == 'DELIVERED' or obj.status == 'COMPLETED' or obj.status == 'CANCELLED' %}
+                                                    <a href="{{pro.product.get_url}}" class="btn btn-sm btn-outline-primary mt-3">Add Cart</a> 
+                                                        {% if not obj.status == 'CANCELLED' %}
+                                                        <a href="{% url 'get_review' pro.id %}" class="btn btn-sm btn-outline-warning mt-3" type="button"> Comment </a>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            
+                                        </table>
+                                        {% endfor %}
+                                    </div>
+                                </div> <!-- card-body .// -->
+                                
+                            </div> <!-- order-group.// --> 
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </main>
+        </div> <!-- row.// -->
+    </div>
+        
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock content %}

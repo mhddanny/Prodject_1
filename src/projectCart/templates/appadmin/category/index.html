@@ -1,0 +1,139 @@
+{% extends 'appadmin/master.html' %}
+{% load static %}
+{% block title %}
+    Admin | Category All
+{% endblock title %}
+
+{% block content %}
+
+
+<div class="container-fluid py-4">
+  <nav aria-label="breadcrumb ">
+    <ol class="breadcrumb breadcrumb-style1 p-2">
+      <li class="breadcrumb-item">
+        <a href="{% url 'dashboard_admin' %}" style="font-size: large;">Home</a>
+      </li>
+      <li class="breadcrumb-item active" style="font-size: large;">Category</li>
+    </ol>
+  </nav>
+
+  {% include 'appadmin/include/alerts.html' %}
+
+  <div class="row mt-4">
+    <div class="col-12">
+        <div class="card card-frame mb-4">
+            <div class="card-header pb-0">
+              <div class="row">
+                <div class="col ">
+                  <h6 class="font-weight-bold">Categorys</h6>
+                </div>
+                <div class=" col justify-content-end text-end">
+                  <a href="{% url 'add_category' %}" type="button" class="btn btn-sm rounded-pill btn-outline-primary">
+                    <i class='bx bxs-add-to-queue'></i> Add Product
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center justify-content-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Parent</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Description</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cat in category %}
+                    <tr>
+                      <td>
+                        <div class="d-flex px-3">
+                          <div>
+                            <img src="{{cat.cat_image.url}}" class="avatar avatar-sm rounded-circle me-2" alt="spotify">
+                          </div>
+                          <div class="my-auto">
+                            <h6 class="mb-0 text-sm">{{cat.category_name}}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-xs font-weight-bold">{{cat.parent.category_name}}</span>
+                      </td>
+                      <td>
+                        <span class="text-xs font-weight-bold">{{cat.description}}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <a href="{% url 'edit_category' cat.slug cat.id %}" class="btn btn-link text-secondary mb-0">
+                          <i class='bx bx-edit'></i>
+                        </a>
+                        <a href="{% url 'delete_category' cat.slug cat.id %}" class="btn btn-link text-danger mb-0 " onclick="return confirm('Are you sure delete category ?')">
+                          <i class='bx bxs-trash'></i>
+                        </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <!-- Pagination -->
+    {% if category.has_other_pages %}
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+          {% if category.has_previous %}
+          <li class="page-item prev">
+              <a class="page-link" href="?page={{ category.previous_page_number }}" aria-label="Previous">
+                  <i class="tf-icon bx bx-chevrons-left bx-sm"></i>
+                  <span aria-hidden="true"><i class="ni ni-bold-left" aria-hidden="true"></i></span>
+              </a>
+          </li>
+          {% else %}
+          <li class="page-item prev disabled">
+              <a class="page-link" href="#link" aria-label="Previous">
+                <i class="tf-icon bx bx-chevrons-left bx-sm"></i>  
+                <span aria-hidden="true"><i class="ni ni-bold-left" aria-hidden="true"></i></span>
+              </a>
+          </li>
+          {% endif %}
+  
+          {% for i in category.paginator.page_range %}
+          {% if category.number == i %}
+              <li class="page-item active">
+                  <a class="page-link" href="#link">{{i}}</a>
+              </li>
+          {% else %}
+              <li class="page-item">
+                  <a class="page-link" href="?page={{i}}">{{i}}</a>
+              </li>
+          {% endif %}
+          {% endfor %}
+  
+          {% if category.has_next %}
+          <li class="page-item next">
+          <a class="page-link" href="?page={{ category.next_page_number }}" aria-label="Next">
+            <i class="tf-icon bx bx-chevrons-right bx-sm"></i>  
+            <span aria-hidden="true"><i class="ni ni-bold-right" aria-hidden="true"></i></span>
+          </a>
+          </li>
+          {% else %}
+          <li class="page-item next disabled">
+              <a class="page-link" href="#link" aria-label="Next">
+                <i class="tf-icon bx bx-chevrons-right bx-sm"></i>  
+                <span aria-hidden="true"><i class="ni ni-bold-right" aria-hidden="true"></i></span>
+              </a>
+          </li>
+          {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+    
+
+{% endblock %}

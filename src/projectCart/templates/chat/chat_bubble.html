@@ -1,0 +1,99 @@
+{% load static %}
+{% csrf_token %}
+
+{% block head %}
+
+{% endblock head %}
+
+<style>
+    .hidden {display:none;}
+
+    [data-initials]:before {
+        background: #099bdd;
+        color: white;
+        opacity: 1; 
+        content: attr(data-initials); 
+        display: inline-block; 
+        font-weight: 600; 
+        border-radius: 50%; 
+        vertical-align: middle; 
+        margin-right: 0.5em; 
+        width: 50px; 
+        height: 50px; 
+        line-height: 50px; 
+        text-align: center; 
+        margin: 5px 8px;
+    }
+</style>
+<input type="checkbox" id="check">
+
+<label class="chat-btn" for="check" id=""> 
+    <i class="fa fa-commenting-o comment"></i> 
+    <i class="fa fa-close close"></i> 
+</label> 
+<div class="wrapper"> 
+
+    <div class="header"> 
+        <div class="form-row">
+            <div id="back_chat" class="text-right ml-1 mr-5">
+                <button id="button_back_chat" type="button" class="btn btn-sm btn-outline-light text-right"><i class="fas fa-arrow-left"></i></button>  
+            </div>
+            <div class="text-center ml-4 mr-4">
+                <h6>Let's Chat - Online</h6>  
+            </div>
+            <div id="close_chat" class="ml-5">
+                <button id="button_close_chat" type="button" class="btn btn-sm btn-outline-light text-right"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </div> 
+    <div id="chat_welcome" class="hidden">
+        <div class="text-center p-2"> 
+            <span>Please fill out the name to start chat!</span> 
+        </div> 
+
+        <div class="chat-form" id="chatForm"> 
+            <input id="chat_name" type="text" name="name" class="form-control" placeholder="Name"> 
+            <button id="chat_join" class="btn btn-sm btn-outline-primary btn-block mb-3 disabled">Join chat</button> 
+        </div> 
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div id="chat_room" class="hidden">  
+            <div class="chat-form">
+                <div id="chat_log" class="overflow-auto" style="height: 350px; width: 320px;">
+                    <p>Welcome</p>  
+                    <!-- <div class="d-flex flex-row justify-content-start mb-4">
+                        <div data-initials="GC"></div>
+                        <div>
+                            <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #ffffff;">Okay</p>
+                            <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #ffffff;">We will go on
+                                Sunday?</p>
+                            <p class="small ms-3 mb-3 rounded-3 text-muted">00:07</p>
+                        </div>
+                    </div> -->
+                    
+                    <!-- <div class="d-flex flex-row justify-content-end mb-4">
+                        <div>
+                            <p class="small p-2 me-3 mb-1 text-white rounded-3" style="background-color: #349afa;">That's awesome!</p>
+                            <p class="small p-2 me-3 mb-1 text-white rounded-3" style="background-color: #349afa;">I will meet you Sandon Square
+                                sharp at
+                                10 AM</p>
+                            <p class="small p-2 me-3 mb-1 text-white rounded-3" style="background-color: #349afa;">Is that okay?</p>
+                            <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">00:09</p>
+                        </div>
+                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4-bg.webp"
+                            alt="avatar 1" style="width: 45px; height: 100%;" class="ml-2">
+                    </div>                  -->
+                </div>
+                <div class="input-group">
+                    <input id="chat_message_input" type="text" name="body" class="form-control" placeholder="messages"> 
+                    <button id="chat_message_submit" class="btn btn-outline-primary mb-3 disabled" type="submit"><i class="fas fa-paper-plane"></i></button> 
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% block script %}
+<script src="{% static 'js/chat/bubble.js' %}"></script>
+{% endblock script %}

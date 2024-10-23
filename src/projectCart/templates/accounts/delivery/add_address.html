@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}
+    Add Addrees Delivery Service
+{% endblock title %}
+
+{% block content %}
+<output>
+        
+    <section class="section-content padding-y bg">
+        
+        <div class="container">
+            <!-- ============================ COMPONENT 1 ================================= -->
+            <div class="row">
+                {% include 'accounts/dashboard_slide.html' %}
+                <main class="col-md-9">
+                    <article class="card">
+                        <header class="card-header">
+                            <nav class="fill"> 
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                                    <li class="breadcrumb-item"><a href="{% url 'address' %}">Address</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Add Address</li>
+                                </ol>  
+                            </nav> <!-- col.// -->
+                        </header>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form name="address_form" method="post" enctype="multipart/form-data">
+                                        {% include 'includes/alerts.html' %}
+                                        {% csrf_token %}
+                                        <div class="form-row">
+                                            <div class="col form-group">
+                                                <label for="">Full Name</label>
+                                                {{form.first_name}}
+                                            </div>
+                                            <div class="col form-group">
+                                                <label for="">Last Name</label>
+                                                {{form.last_name}}
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col form-group">
+                                                <label for="">Email</label>
+                                                {{form.email}}
+                                            </div>
+                                            <div class="col form-group">
+                                                <label for="">Phone</label>
+                                                {{form.phone}}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Addres Line 1</label>
+                                            {{form.address_line_1}}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Address Line 2</label>
+                                            {{form.address_line_2}}
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col form-group">
+                                                <label>Province</label>
+                                                <select class="custom-select d-block w-100" name="province" id="province_id" >
+                                                    <option value="">-- Province --</option>
+                                                    {% for province in prov %}
+                                                        <option value="{{ province.id }}">{{ province.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div> <!-- form-group end.// -->
+                                            <div class="col form-group">
+                                                <label>Kota</label>
+                                                <select class="custom-select d-block w-100" name="city" id="city_id" >
+                                                    <option value="">-- Kota --</option>
+                                                </select>
+                                            </div> <!-- form-group end.// -->
+
+                                            <div class="col form-group">
+                                                <label>Kecamatan</label>
+                                                <select class="custom-select d-block w-100" name="district" id="district_id" >
+                                                    <option value="">-- Kecematan --</option>
+                                                </select>
+                                            </div> <!-- form-group end.// -->
+                                        </div> <!-- form-row end.// -->
+                                     
+                                        <div class="form-group">
+                                            <button type="submit" value="submit" class="btn btn-primary btn-block" onclick="submitForm()" >Continue</button>
+                                        </div> <!-- form-group// -->      
+                                                                            
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                </main>
+            </div>
+        </div>
+    </section>
+</output>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    function submitForm(){
+        var form = document.getElementsByName('address_form')[0];
+        form.submit()
+        form.reset()
+        return false
+    }
+
+    $(document).ready(function(){
+        //KETIKA SELECT BOX DENGAN ID province_id DIPILIH
+        $('#province_id').on('change', function() {
+            //MAKA AKAN MELAKUKAN REQUEST KE URL /API/CITY
+            //DAN MENGIRIMKAN DATA PROVINCE_ID
+            
+            $.ajax({
+                url: `/accounts/city/`,
+                type: "GET",
+                data: { province_id: $(this).val() },
+                success: function(html){
+                    console.log(html)
+                    //SETELAH DATA DITERIMA, SELEBOX DENGAN ID CITY_ID DI KOSONGKAN
+                    $('#city_id').empty()
+                    $('#district_id').empty()
+                    //KEMUDIAN APPEND DATA BARU YANG DIDAPATKAN DARI HASIL REQUEST VIA AJAX
+                    //UNTUK MENAMPILKAN DATA KABUPATEN / KOTA
+                    $('#district_id').append('<option value="">--null--</option>')
+                    $('#city_id').append('<option value="">Pilih Kabupaten/Kota</option>')
+                    $.each(html.data, function(key, city) {
+                        $('#city_id').append('<option value="'+city.id+'">'+city.name+'</option>')
+                    })
+                }
+            });
+        })
+
+        //LOGICNYA SAMA DENGAN CODE DIATAS HANYA BERBEDA OBJEKNYA SAJA
+        $('#city_id').on('change', function() {
+            $.ajax({
+                url: '/accounts/district/',
+                type: "GET",
+                data: { city_id: $(this).val() },
+                success: function(html){
+                    $('#district_id').empty()
+                    $('#district_id').append('<option value="">Pilih Kecamatan</option>')
+                    $.each(html.data, function(key, district) {
+                        $('#district_id').append('<option value="'+district.id+'">'+district.name+'</option>')
+                    })
+                }
+            });
+        })
+        });
+</script>
+{% endblock script %}

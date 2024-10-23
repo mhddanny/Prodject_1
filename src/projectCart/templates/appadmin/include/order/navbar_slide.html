@@ -1,0 +1,36 @@
+<div class="card card-frame mb-2 ">
+    <div class="nav-wrapper position-relative end-0">
+        <ul class="nav nav-pills nav-fill p-1" id="pill-tab" role="tablist">
+            <li class="nav-item">
+                <a class="mb-0 px-0 py-1 nav-link {% if '/app-admin/orders/' == request.path %} active {% endif %}" href="{% url 'orders' %}" data-bd-toggel="pill" data-bs-target="#{{title}}" role="tab" aria-selected="true" >
+                Semua  <span class="badge bg-gradient-danger px-2 mt-0" style="height: min-content;">{{total_orders}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="mb-0 px-0 py-1 nav-link {% if '/app-admin/orders/peding/' == request.path %} active {% endif %}" href="{% url 'orders_pending' %}" data-bd-toggel="pill" data-bs-target="#{{title}}" role="tab" aria-selected="true">
+                Belum Bayar    <span class="badge bg-gradient-danger px-2 mt-0" style="height: min-content;">{{pending}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="mb-0 px-0 py-1 nav-link {% if '/app-admin/orders/confirm/' == request.path %} active {% endif %}" href="{% url 'orders_confirm' %}" data-bd-toggel="pill" data-bs-target="#{{title}}" role="tab" aria-selected="true" >
+                Perlu Dikirim  <span class="badge bg-gradient-danger px-2 mt-0" style="height: min-content;">{{confirm}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="mb-0 px-0 py-1 nav-link {% if '/app-admin/orders/on_the_way/' == request.path %} active {% endif %}" href="{% url 'orders_on_the_way' %}" data-bd-toggel="pill" data-bs-target="#{{title}}" role="tab" aria-selected="true" >
+                Dikirim  <span class="badge bg-gradient-danger px-2 mt-0" style="height: min-content;">{{otw}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="mb-0 px-0 py-1 nav-link {% if '/app-admin/orders/delivered/' == request.path %} active {% endif %}" href="{% url 'orders_delivered' %}" data-bd-toggel="pill" data-bs-target="#{{title}}" role="tab" aria-selected="false" >
+                Selesai <span class="badge bg-gradient-danger px-2 mt-0" style="height: min-content;">{{delivered}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="mb-0 px-0 py-1 nav-link {% if '/app-admin/orders/delivered/' == request.path %} active {% endif %}" href="{% url 'orders_batal' %}" data-bd-toggel="pill" data-bs-target="#{{title}}" role="tab" aria-selected="true" >
+                Pembatalan  <span class="badge bg-gradient-danger px-2 mt-0" style="height: min-content;">{{cancelled}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,505 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<!-- @TODO: replace SET_YOUR_CLIENT_KEY_HERE with your client key -->
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"data-client-key="{{client}}"></script>
+<!-- Note: replace with src="https://app.midtrans.com/snap/snap.js" for Production environment -->
+<script src="https://www.paypal.com/sdk/js?client-id=ARJ6PlfO5VACKWrYSPpxdJkWmY_Hm2wBlhaCpCISgyYYCYLljy3dalG69LaLeTyZsQPWK_0Q7NX9TYr9&currency=USD"></script>
+{% endblock head %}
+    
+{% block content %}
+
+<section class="section-content padding-y bg">
+    <div class="container">
+    <!-- ============================ COMPONENT 1 ================================= -->
+    <h4 class="text-center mb-4">Review Your Order and Make Payment</h4>
+        <div class="row">
+            <aside class="col-lg-8">
+                <div class="card mb-2">
+                    <div class="card-header">
+                        Informasi Address
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <h5 class="title">Shipping Address</h5>
+                                    <p class="card-text mb-0">{{order.address.full_name}} </p>
+                                    <p class="card-text mb-0">{{order.address.email}} </p>
+                                    <p class="card-text mb-0">{{order.address.phone}} </p>
+                                    <p class="card-text mb-0">{{order.address.full_address}} </p>
+                                    <p class="card-text mb-0">{{order.address.district.province.name}}, {{order.address.district.city.name}}, {{order.address.district.city.post_code}} </p>
+                                    <p class="card-text mb-0">{{order.address.district}} </p>
+                                    {% if order.order_note %}
+                                        <b>Order Note: </b> {{order.order_note}}
+                                    {% endif %}
+                                </div>
+                                <div class="col form-group">
+                                    <h5 class="title">Billing Address</h5>
+                                    <p class="card-text mb-0">{{user.full_name}} </p>
+                                    <p class="card-text mb-0">{{user.email}} </p>
+                                    <p class="card-text mb-0">{{user.phone_number}} </p>
+                                    {% for u in user.userprofile_set.all %}
+                                    <p class="card-text mb-0">{{u.full_address}} </p>
+                                    <p class="card-text mb-0">{{u.city}}, {{u.state}}, {{u.country}} </p>
+                                    
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- card.// -->
+
+                <div class="card mb-2">
+                    <div class="card-header">
+                      Review Products
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Product</th>
+                                    <th scope="col" width="120">Price</th>
+                                    <th scope="col" width="120">Sub Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for cart_item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <figure class="itemside align-items-center">
+                                            <div class="aside"><img src="{{cart_item.product.product.images.url}}" class="img-sm"></div>
+                                            <figcaption class="info">
+                                                <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{cart_item.product.product.name}}</a>
+                                                <p class="text-muted small">
+                                                    {% if cart_item.variation.all %}
+                                                        {% for item in cart_item.variation.all %}
+                                                            {{ item.varian_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </p>
+                                            </figcaption>
+                                        </figure>
+                                    </td>
+                                    <td>
+                                        <div class="price-wrap mt-3"> 
+                                            <var class="price">Rp. {{cart_item.product.price|floatformat:"2g"}}</var> 
+                                            <small class="text-muted">Qty : x {{cart_item.quantity}}</small> 
+                                        </div> <!-- price-wrap .// -->
+                                    </td>
+                                    <td> 
+                                        <div class="price-wrap mt-3"> 
+                                            <var class="price">Rp. {{cart_item.sub_total|floatformat:"2g"}}</var> 
+                                            <small class="text-muted"> Rp. {{cart_item.product.price|floatformat:"2g"}} each </small> 
+                                        </div> <!-- price-wrap .// -->
+                                    </td>
+                                    
+                                </tr>
+                            {% endfor %}    
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- <div class="card-footer text-body-secondary">
+                        <p class="icontext"><i class="icon text-success fa fa-truck"></i> Ets Delivery within 1-2 weeks</p>
+                    </div> -->
+                </div> <!-- card.// -->
+                <div class="" id="payElement">
+                    <article class="accordion" id="accordion_pay">
+                        <!-- Bank Transfer -->
+                        <div class="card">
+                            <header class="card-header">
+                                <img src="{% static 'images/misc/payment-bank.png' %}" class="float-right" height="24">  
+                                <label class="form-check" data-toggle="collapse" data-target="#pay_transfers">
+                                    <input class="form-check-input" name="payment-option" type="radio" value="option1">
+                                    <h6 class="form-check-label"> Bank Transfer </h6>
+                                </label>
+                            </header>
+                            <div id="pay_transfers" class="collapse show" data-parent="#accordion_pay">
+                                <div class="card-body">
+                                    <p class="text-muted">Some instructions about how to pay </p>
+                                    <div class="form-row ml-3 btn-group-toggle" data-toggle="buttons">
+                                        <label for="" class="btn btn-check btn-outline-primary mr-2 mb-2"><input type="radio" name="bca" id="bca_selector" value="bca">BCA</label>
+                                        <label for="" class="btn btn-check btn-outline-primary mr-2 mb-2"><input type="radio" name="bni" id="bni_selector" value="bni">BNI</label>
+                                        <label for="" class="btn btn-check btn-outline-primary mr-2 mb-2"><input type="radio" name="bri" id="bri_selector" value="bri">BRI</label>
+                                        <label for="" class="btn btn-check btn-outline-primary mr-2 mb-2"><input type="radio" name="echannel" id="mandiri_selector" value="echannel">Mandiri Bill</label>
+                                        <label for="" class="btn btn-check btn-outline-primary mr-2 mb-2"><input type="radio" name="permata" id="permata_selector" value="permata">PERMATA</label>
+                                        <label for="" class="btn btn-check btn-outline-primary mr-2 mb-2"><input type="radio" name="cimb" id="cimb_selector" value="cimb">CIMB</label>
+                                    </div>
+                                </div> <!-- card body .// -->
+                            </div> <!-- collapse .// -->
+                        </div> <!-- card.// -->
+                        
+                        <!-- E-Wallet -->
+                        <div class="card">
+                            <header class="card-header">
+                                <img src="{% static 'images/misc/payment-bank.png' %}" class="float-right" height="24">  
+                                <label class="form-check" data-toggle="collapse" data-target="#pay_e-wallet">
+                                    <input class="form-check-input" name="payment-option" type="radio" value="option2">
+                                    <h6 class="form-check-label"> E-Wallet </h6>
+                                </label>
+                            </header>
+                            <div id="pay_e-wallet" class="collapse" data-parent="#accordion_pay">
+                                <div class="card-body">
+                                    <p class="text-muted">Some instructions about how to pay </p>
+                                    <div class="form-row ml-3 btn-group-toggle" data-toggle="buttons">
+                                        <label for="" class="btn btn-check btn-outline-primary mr-2"><input type="radio" name="gopay" id="gopay">GoPay</label>
+                                    </div>
+                                </div> <!-- card body .// -->
+                            </div> <!-- collapse .// -->
+                        </div> <!-- card.// -->
+
+                        <!-- card  -->
+                        <div class="card">               
+                            <header class="card-header">
+                                <img src="{% static 'images/misc/payment-card.png' %}" class="float-right" height="24">  
+                                <label class="form-check collapsed" data-toggle="collapse" data-target="#pay_cart" aria-expanded="false">
+                                    <input class="form-check-input" name="payment-option" type="radio" value="option3">
+                                    <h6 class="form-check-label"> Credit Card </h6>
+                                </label>
+                            </header>
+                            <div id="pay_cart" class="collapse" data-parent="#accordion_pay" style="">
+                                <div class="card-body">
+                                    <p class="alert alert-success">Some information or instruction</p>
+                                    <form class="form-inline">
+                                        <input type="text" class="form-control mr-2" placeholder="xxxx-xxxx-xxxx-xxxx" name="">
+                                        <input type="text" class="form-control mr-2" style="width: 100px" placeholder="dd/yy" name="">
+                                        <input type="number" maxlength="3" class="form-control mr-2" style="width: 100px" placeholder="cvc" name="">
+                                        <button class="btn btn btn-success">Button</button>
+                                    </form>
+                                </div> <!-- card body .// -->
+                            </div> <!-- collapse .// -->
+                        </div> <!-- card.// -->
+
+                        <!-- Paypal -->
+                        <div class="card">
+                            <header class="card-header">
+                                <img src="{% static 'images/misc/payment-paypal.png' %}" class="float-right" height="24"> 
+                                <label class="form-check" data-toggle="collapse" data-target="#pay_pal" aria-expanded="true">
+                                    <input class="form-check-input" name="payment-option" type="radio" value="option4">
+                                    <h6 class="form-check-label"> 
+                                        Paypal 
+                                    </h6>
+                                </label>
+                            </header>
+                            <div id="pay_pal" class="collapse" data-parent="#accordion_pay" style="">
+                            <div class="card-body">
+                                <p class="text-center text-muted">Connect your PayPal account and use it to pay your bills. You'll be redirected to PayPal to add your billing information.</p>
+                                <p class="text-center">
+                                    <a href="#"><img src="{% static 'images/misc/btn-paypal.png' %}" height="32"></a>
+                                    <br><br>
+                                </p>
+                            </div> <!-- card body .// -->
+                            </div> <!-- collapse .// -->
+                        </div> <!-- card.// -->
+                    </article>
+                </div>      
+            </aside> <!-- col.// -->
+            <!-- Rincian payment -->
+            <aside class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="mb-3">Overview</h4>
+                        <dl class="dlist-align">
+                            <dt class="text-muted col-sm-7">Total price:
+                                <span class="float-right text-muted">{{cart_items.count}} items</span>
+                            </dt>
+                            <dd class="text-right col-sm-5"><strong>Rp. {{total|floatformat:"2g"}}</strong></dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt class="text-muted col-sm-7">Diskon :
+                                <span class="float-right text-success">{{0}}%</span>
+                            </dt>
+                            <dd class="text-right col-sm-5"><strong>Rp. {{0|floatformat:"2g"}}</strong></dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt class="text-muted col-sm-7">Tax :
+                                <span class="float-right text-danger">2%</span>
+                            </dt>
+                            <dd class="text-right col-sm-5"><strong>Rp. {{tax|floatformat:"2g"}}</strong></dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt class="text-muted col-sm-7">Delivey Change:</dt>
+                            <dd class="text-right col-sm-5"> Rp. {{cost|floatformat:"2g"}}</dd>
+                        </dl>
+                        <hr>
+                        <dl class="dlist-align">
+                            <dt class="font-weight-bold col-sm-6">Total:</dt>
+                            <dd class="text-right col-sm-6 h5"><strong>Rp. {{all_total|floatformat:"2g"}}</strong></dd>
+                        </dl>
+                        <hr>
+                        <p class="text-center mb-3">
+                            <img src="{% static 'images/misc/payments.png' %}" height="26">
+                        </p>
+                        <!-- Bayar -->
+                        <!-- <button id="pay-button" class="btn btn-primary btn-block"> Bayar o</button> -->
+                        
+                        <!-- midtrans -->
+                        <button id="payButton" class="btn btn-outline-primary btn-block">Bayar</button>
+
+                        <br>
+                        <!-- Paypall Button -->
+                        <div id="paypal-button-container">
+                        </div>
+
+                    </div> <!-- card-body.// -->
+                </div> <!-- card.// -->
+            </aside> <!-- col.// -->
+        </div> <!-- row.// -->
+
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+   
+   </div> <!-- container .//  -->
+</section>
+
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+<script>
+
+    function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+    var amount = "{{ all_total }}"
+    var url = "{% url 'payments' %}"
+    var csrftoken = getCookie('csrftoken');
+    var orderID = "{{ order.order_number }}"
+    var payment_method = 'Paypal'
+    var redirect_url = "{% url 'order_complete' %}"
+
+        // Render The Paypal
+    paypal.Buttons({
+        // Sets up the transaction when a payment button is clicked
+        createOrder: (data, actions) => {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: amount, // Can also reference a variable or function
+                    }
+                }]
+            });
+        },       
+         // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+            return actions.order.capture().then(function(orderData) {
+            // Successful capture! For dev/demo purposes:        
+            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+            const transaction = orderData.purchase_units[0].payments.captures[0];
+            console.log(orderData);
+            sendData()
+
+            function sendData(){
+                fetch(url, {
+                    method : "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        "X-CSRFToken": csrftoken,
+                    },
+                    body: JSON.stringify({
+                        orderID: orderID,
+                        transID: orderData.id,
+                        payment_method: payment_method,
+                        status: orderData.status,
+                    }),
+                })
+                .then((response) => response.json())
+                .then((data )=> {
+                    console.log('Success :', data);
+                    console.log('Transaction Completed.');
+                    window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id='+data.transID
+                });
+            }
+                
+            // alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+            // When ready to go live, remove the alert and show a success message within this page. For example: 
+            const element = document.getElementById('paypal-button-container');
+            element.innerHTML = '<h3>Thank you for your payment!</h3>';
+            // Or go to another URL:  actions.redirect('thank_you.html');
+            });
+        }
+        
+    }).render('#paypal-button-container');
+        
+</script>
+<!-- midtrans -->
+<!-- <script id="midtrans-script" type="text/javascript"
+    src="https://api.midtrans.com/v2/assets/js/midtrans-new-3ds.min.js"
+    data-environment="sandbox"
+    da-key=}}">
+</script> -->
+<script>
+    function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+    var url_pay = "{% url 'payment' %}"
+    var csrftoken = getCookie('csrftoken');
+    var auth_server = "{{ server }}"
+    var orderID = "{{ order.order_number }}"
+    var amount = "{{ all_total }}"
+    var cardID = "{{cardID}}"
+    var redirect_url = "{% url 'payment_proses' %}"
+    var completed_url = "{% url 'order_complete' %}"
+    
+    const payButton = document.getElementById('payButton');
+    const payElement = document.getElementById('payElement');
+    const bcaElemant = document.getElementById('bca_selector');
+    const bniElemant = document.getElementById('bni_selector');
+    const briElemant = document.getElementById('bri_selector');
+    const mandiriElemant = document.getElementById('mandiri_selector');
+    const permataElemant = document.getElementById('permata_selector');
+    const cimbElemant = document.getElementById('cimb_selector');
+    
+    function paymentProses(result) {
+        order = JSON.stringify(result.order_id)
+        console.log('order_id', order)
+
+        if (order) {
+            fetch(redirect_url,{
+                method : "POST",
+                body : JSON.stringify({
+                    "order_id": result.order_id,
+                }),
+                headers : {
+                    "Accept": "application/json",
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": csrftoken,
+                }
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Transaction', data); 
+                // statusTransaction(data)
+                window.location.href = completed_url + '?order_number='+data.order_number+'&payment_id='+data.transID
+                payButton.innerHTML = '<h3>Thank you for your payment!</h3>';
+            })
+            .catch((error) => {
+                console.error("Error:", error)
+                // Refresh the page
+                //window.location.reload();
+
+                
+            }); 
+        }
+    }
+
+    function transaction(data) {
+        let snapToken = data.data
+        snap.pay(snapToken, {
+            // Optional
+            onSuccess: function(result){
+                /* You may add your own js here, this is just example */ 
+                alert("payment success!");
+                console.log('success', );
+                console.log(result);
+                paymentProses(result);
+                // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+               
+            },
+            // Optional
+            onPending: function(result){
+                /* You may add your own js here, this is just example */ 
+                alert("wating your payment!");
+                console.log('pending');
+                console.log(result);
+                paymentProses(result);
+                // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+            },
+            // Optional
+            onError: function(result){
+                /* You may add your own js here, this is just example */ 
+                alert("payment failed!");
+                console.log(result);
+                paymentProses(result);
+                // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+            },
+            onClose: function(){
+                console.log('customer closed the popup without finishing the payment');
+                alert('you closed the popup without finishing the payment');
+                //window.location.reload();
+            }
+        });
+    }
+
+    function sendData() {
+        fetch(url_pay, {
+            method : "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-type": "application/json",
+                "X-CSRFToken": csrftoken,
+                "Authorization": "Basic"+ auth_server,
+            },
+            body: JSON.stringify({
+                orderID: orderID,
+                amount: amount,
+                cardID: cardID,
+            }),
+        })
+        .then((response) => response.json())
+        .then((data )=> {
+            console.log('Success :', data);
+            transaction(data)  
+        })
+        .catch((error) => {
+            console.error("Error:", error)
+            //window.location.reload();
+        });      
+    }
+
+    payButton.addEventListener('click', function (event) {
+        // if (bcaElemant.checked == true) {
+        //     var pay = bcaElemant.value
+        //     console.log('pay', pay)
+        //     sendData()
+        // }else if (bniElemant.checked == true) {
+        //     var pay = bniElemant.value
+        //     console.log('pay', pay)
+        //     sendData()
+        // }else if (briElemant.checked == true) {
+        //     var pay = briElemant.value
+        //     console.log('pay', pay)
+        //     sendData()
+        // }else if (mandiriElemant.checked == true) {
+        //     var pay = mandiriElemant.value
+        //     console.log('pay', pay)
+        //     sendData()
+        // }else if (permataElemant.checked == true) {
+        //     var pay = permataElemant.value
+        //     console.log('pay', pay)
+        //     sendData()
+        // }else if (cimbElemant.checked == true) {
+        //     var pay = cimbElemant.value
+        //     console.log('pay', pay)
+        //     sendData()
+        // }
+
+        sendData()
+    })
+    
+</script>
+
+{% endblock content %}

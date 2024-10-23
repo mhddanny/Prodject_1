@@ -1,0 +1,527 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+    <!-- ============================ COMPONENT 1 ================================= -->   
+    <form name="placeOrder" action="{% url 'place_order' %}" method="POST">
+    {% csrf_token %}
+        <div class="row">
+            <aside class="col-lg-6">
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-row">
+                                    <div class="col form-group">
+                                        <h4 class="card-title mr-2">Shipping Address</h4>
+                                    </div>
+                                    <div class="col form-group text-right">
+                                        <!-- Button trigger modal -->
+                                        <button id="btnNewAddress" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#NewAddress">
+                                            <i class="fa fa-plus mr-2"></i>New
+                                        </button>
+                                        <button id="btnChooseAddress" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#pilihAddress">
+                                            Pilih Address
+                                        </button>
+                                    </div>
+        
+                                    
+                                </div>
+                                <!-- Get Data Address Default -->
+                                <div class="form-row">
+                                    <div class=" col form-group">    
+                                        <div class="row">
+                                            {% if not address %}
+                                            <main class="col-md-12">
+                                                <article class="card card-body text-center">
+                                                    <h5 class="text-muted">
+                                                        Shipping Address is empty
+                                                    </h5>
+                                                </article>
+                                            </main>
+                                            {% else %}
+                                            <main class="col-md-12">
+                                                <article class="card card-body">
+                                                    <div class="row align-items-center">
+                                                        <div class="col">
+                                                            <div class="itemside">
+                                                                <input type="text" name="address_id" id="" value="{{address.id}}" hidden>
+                                                                <div class="info">
+                                                                    <span class="text-muted">{{address.full_name}}</span>
+                                                                    <p class="title"><i class="icon fa fa-phone mr-2" style="color: blue;"> </i> {{address.phone}} </p>
+                                                                </div>
+                                                            </div> 
+                                                        </div> <!-- col.// -->
+                                                        <div class="col-md-6"> 
+                                                            <div class="itemside">
+                                                                <div class="info">
+                                                                    <span class="text-muted">{{address.district.province.name}} <br> {{address.district.city.name}},{{address.district.name}}</span>
+                                                                    <p class="title"><i class="fa fa-map-marker mr-2" style="color: red;"></i>{{address.full_address}} </p>
+                                                                </div>
+                                                            </div>
+                                                        </div> <!-- col.// -->
+                                                        
+                                                        <div class="colflex-grow-0 text-right">
+                                                            <button class="btn btn-sm btn-success" type="button" disabled><i class="fa fa-check mr-1"></i>Default</button>
+                                                        </div>
+                                                    </div> <!-- row.// -->
+                                                </article> <!-- card .// -->
+                                            </main> <!-- col.// -->
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>        
+                </div> <!-- card.// -->
+
+                <!--Card Get Courier -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Get Courier</h4>
+                        <div class="form-group">
+                            <label for="">Courier Company</label>
+                            <select name="courier_company" id="courier_company" class="form-control" required>
+                                <option value="">Select Courier Company</option>
+                                <option value="jne">JNE</option>
+                                <option value="pos">Pos Indonesia</option>
+                                <option value="tiki">TIKI</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Courier Service</label>
+                            <select name="courier_service" id="courier_service" class="form-control" required>
+                                <option value="">-Null--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Cost</th>
+                                        <th>Estimasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableSevice">
+                                    <tr></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bill Address -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="form-row">
+                            <label for="">Order Note</label>
+                            <textarea class="form-control" name="order_note" id="" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div> <!-- card.// -->
+
+            </aside> <!-- col.// -->
+            
+            <aside class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="mb-3">Info Delivery</h4>
+                            <div class="form-group">
+                                <dl class="dlist-align ml-4">
+                                    <dt class="text-muted">Total Weight:</dt>
+                                    <input type="text" name="total_weight" id="" value="{{total_weight}}" hidden>
+                                    <dd class=""><strong name="total_weight" >{{total_weight}} </strong>gram</dd>
+                                </dl>
+                                <dl class="dlist-align ml-4">
+                                    <dt class="text-muted">courier:</dt>
+                                    <dd class=""><strong id="courier_ket">--Pilih Kurir--</strong></span></dd>
+                                </dl>
+                                <dl class="dlist-align ml-4">
+                                    <dt class="text-muted">Cost:</dt>
+                                    <dd class=""><strong id="ongkir">Rp. 0</strong></span></dd>
+                                </dl>
+                            </div>
+                        
+                    </div> <!-- card-body.// -->
+                </div> <!-- card.// -->
+                <br>
+                
+                <div class="card">
+                    <div class="card-body">      
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Product</th>
+                                    <th scope="col" width="150">Price</th>
+                                    <th scope="col" width="150">Sub Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for cart_item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <figure class="itemside align-items-center">
+                                            <div class="aside"><img src="{{cart_item.product.product.images.url}}" class="img-sm"></div>
+                                            <figcaption class="info">
+                                                <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{cart_item.product.product.name}}</a>
+                                                <p class="text-muted small">
+                                                    {% if cart_item.variation.all %}
+                                                        {% for item in cart_item.variation.all %}
+                                                            {{ item.varian_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
+                                                        {% endfor %}
+                                                    {% endif %}
+            
+                                                </p>
+                                            </figcaption>
+                                        </figure>
+                                    </td>
+                                    <td>
+                                        <div class="price-wrap mt-3"> 
+                                            <var class="price">Rp. {{cart_item.product.price|floatformat:"2g"}}</var> 
+                                            <small class="text-muted">Qty : x {{cart_item.quantity}}</small> 
+                                        </div> <!-- price-wrap .// -->
+                                    </td>
+                                    <td> 
+                                        <div class="price-wrap mt-3"> 
+                                            <var class="price">Rp. {{cart_item.sub_total|floatformat:"2g"}}</var> 
+                                            <small class="text-muted"> Rp. {{cart_item.product.price|floatformat:"2g"}} each </small> 
+                                        </div> <!--Sub price-wrap .// -->
+                                    </td>
+                                    
+                                </tr>
+                            {% endfor %}    
+                            </tbody>
+                        </table>                        
+                        <button type="submit " name="submit" class="btn btn-primary btn-block">Place Order </button>
+                        <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
+                        
+                    </div> <!-- card-body.// -->
+                </div> <!-- card.// -->
+            
+            </aside> <!-- col.// -->
+        </div> <!-- row.// --> 
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+    </form>
+    </div> <!-- container .//  -->
+</section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+
+<!-- Modal new form address -->
+<div class="modal fade" id="NewAddress" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="NewAddressLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <form action="{% url 'add_delivery' %}" method="post">
+            {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="NewAddressLabel">New Billing Address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label for="">First Name</label>
+                        <input type="text" name="first_name" class="form-control" required>
+                    </div>
+                    <div class="col form-group">
+                        <label for="">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label for="">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="col form-group">
+                        <label for="">Phone Number</label>
+                        <input type="number" name="phone" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="">Address 1</label>
+                    <input type="text" name="address_line_1" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="">Address 2</label>
+                    <input type="text" name="address_line_2" class="form-control">
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label>Province</label>
+                        <select class="custom-select d-block w-100" name="province_id" id="province_id" required>
+                            <option value="">-- Province --</option>
+                            {% for province in prov %}
+                                <option value="{{ province.id }}">{{ province.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div> <!-- form-group end.// -->
+                    <div class="col form-group">
+                        <label>Kota</label>
+                        <select class="custom-select d-block w-100" name="city_id" id="city_id" required>
+                            <option value="">-- Null --</option>
+                        </select>
+                    </div> <!-- form-group end.// -->
+
+                    <div class="col form-group">
+                        <label>Kecamatan</label>
+                        <select class="custom-select d-block w-100" name="district_id" id="district_id" required>
+                            <option value="">-- Null --</option>
+                        </select>
+                    </div> <!-- form-group end.// -->
+                </div> <!-- form-row end.// -->
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button name="btnSaveAddress" type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
+<!-- Modal Pilih Address -->
+<div class="modal fade" id="pilihAddress" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="pilihAddressLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="pilihAddressLabel">Pilih Address</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% for obj in address_all %}
+            <div class="row">
+                <main class="col-md-12">
+                    <article class="card card-body mb-3">
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <div class="itemside">
+                                    <div class="info">
+                                        <span class="text-muted">Name :{{obj.full_name}}</span>
+                                        <p class="title"><i class="icon fa fa-phone mr-2" style="color: blue;"> </i> {{obj.phone}} </p>
+                                    </div>
+                                </div> 
+                            </div> <!-- col.// -->
+                            <div class="col-md-6"> 
+                                <div class="itemside">
+                                    <div class="info">
+                                        <span class="text-muted">{{obj.district.province.name}}, {{obj.district.city.name}},{{obj.district.name}}</span>
+                                        <p class="title"><i class="icon fa fa-map-marker mr-2" style="color: red;" ></i>{{obj.full_address}} </p>
+                                    </div>
+                                </div>
+                            </div> <!-- col.// -->
+                            <div class="col-2 text-center">
+                                {% if not obj.default %}
+                                {% csrf_token %}
+                                    <a class="btn btn-sm btn-outline-info" id="btnSetDeault" href="{% url 'set_default' obj.id %}"><i class="fa fa-check mr-2"> Set</i></a>
+                                {% else %}
+                                    <button class="btn btn-sm btn-success" type="button" disabled><i class="fa fa-check mr-2"></i>Default</button>
+                                {% endif %}
+                            </div>
+                        </div> <!-- row.// -->
+                    </article> <!-- card .// -->
+                </main> <!-- col.// -->
+            </div>
+            {% endfor %}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    function getCookie(name) {
+        var cookieValue = null
+
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';')
+
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim()
+                
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+
+                    break
+                }
+            }
+        }
+
+        return cookieValue
+    }
+
+    $(document).ready(function(){
+        // JIKA KURIR DIPILIH 1
+        $('#courier_company').on('change', function() {
+
+            $('#courier_ket').text($(this).val());
+
+            //MENGIRIM PERMINTAAN KE SERVER UNTUK MENGAMBIL DATA API
+            $.ajax({
+                url: "/cart/cost/",
+                type: "POST",
+                headers : {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                data: { 
+                    destination: "{{address.district.city.id}}", 
+                    weight: "{{total_weight}}",
+                    courier: $('#courier_company').val() 
+                },
+                success: function(html){
+                    //BERSIHKAN AREA SELECT BOX
+                    // console.log('data', html)
+
+                    $('#tableSevice').empty();
+                    $('#courier_service').empty()
+                    $('#ongkir').empty()
+                    $('#courier_service').append('<option value="">Select Courier Service</option>')
+                    $('#ongkir').text('Rp. 0')         
+
+                    //LOOPING DATA ONGKOS KIRIM
+                    
+                    $.each(html.data.costs, function(key, item) {
+                        //console.log('data :', html.data)
+                        //console.log('cost :', html.data.costs[key])
+                        //console.log('item :', item)
+                        //console.log('cost :', html.data.costs[key].cost[0]['value'])
+                        let service = item.service
+                        let description = item.description
+                        let cost = item.cost[0]['value']
+                        let etd = item.cost[0]['etd']
+
+                        //UPDATE INFORMASI BIAYA PENGIRIMAN
+                        $('#tableSevice').append(
+                            '<tr>\
+                                <td>('+service+')' +description+'</td>\
+                                <td>Rp. '+cost+'</td>\
+                                <td>'+ etd +' day</td>\
+                            <tr/>' 
+                        );
+                        //updata service
+                        $('#courier_service').append(
+                            '<option value="'+cost+'">('+service+') '+description+' </option>');
+                    })
+                
+                }
+            });
+        })
+        //jika di pilih service
+        $('#courier_service').on('change', function () {              
+            let split = $(this).val().split('-')
+            $('#ongkir').text('Rp. ' + split[0]);
+        })
+
+        //KETIKA SELECT BOX DENGAN ID province_id DIPILIH
+        $('#province_id').on('change', function() {
+            //MAKA AKAN MELAKUKAN REQUEST KE URL /API/CITY
+            //DAN MENGIRIMKAN DATA PROVINCE_ID
+            
+            $.ajax({
+                url: `/accounts/city/`,
+                type: "GET",
+                data: { province_id: $(this).val() },
+                success: function(html){
+                    //SETELAH DATA DITERIMA, SEMUA SELEBOX DIKOSONGKAN
+                    $('#city_id').empty()
+                    $('#district_id').empty()
+                    
+                    //KEMUDIAN APPEND DATA BARU YANG DIDAPATKAN DARI HASIL REQUEST VIA AJAX
+                    //UNTUK MENAMPILKAN DATA KABUPATEN / KOTA DAN DATA LAINNYA
+                    $('#city_id').append('<option value="">Pilih Kabupaten/Kota</option>')
+                    $('#district_id').append('<option value="">--Null--</option>')
+                    //Loop Data City
+                    $.each(html.data, function(key, city) {
+                        $('#city_id').append('<option value="'+city.id+'">'+city.name+'</option>')
+                    })
+                }
+            });
+        })
+
+        //LOGICNYA SAMA DENGAN CODE DIATAS HANYA BERBEDA OBJEKNYA SAJA
+        $('#city_id').on('change', function() {
+            $.ajax({
+                url: '/accounts/district/',
+                type: "GET",
+                data: { city_id: $(this).val() },
+                success: function(html){
+                    // console.log(html)
+                    $('#district_id').empty()
+                    $('#district_id').append('<option value="">Pilih Kecamatan</option>')
+                    
+                    $.each(html.data, function(key, district) {
+                        $('#district_id').append('<option value="'+district.id+'">'+district.name+'</option>')
+                    })
+                }
+            });
+        })
+
+        //IF Button Save Address onclick
+        $('#btnSaveAddress').click(function(){
+            let form = document.getElementsByName('placeOrder')[0];
+            form.reset()
+
+        })
+
+        //If button set address
+        $('#btnSetDeault').click(function(){
+            let form = document.getElementsByName('placeOrder')[0];
+            form.reset()
+        })
+
+        //If Button Save Address onclick
+        $('#btnNewAddress').click(function(){
+            //Reser Data html
+            $('#courier_company').empty()
+            $('#courier_company').append(`
+                <option value="">Select Courier Company</option>
+                <option value="jne">JNE</option>
+                <option value="pos">Pos Indonesia</option>
+                <option value="tiki">TIKI</option>
+            `)
+            $('#courier_service').empty();
+            $('#tableSevice').empty()
+            $('#courier_service').append('<option value="">--Null--</option>')
+            $('#tableSevice').append('<tr><tr/>')
+            $('#courier_ket').text('--Null--')
+            $('#ongkir').text('Rp. 0')
+        })
+
+        //If Button Select Servicec Service onclick
+        $('#btnChooseAddress').click(function(){
+            //Reser Data html
+            $('#courier_company').empty()
+            $('#courier_company').append(`
+                <option value="">Select Courier Company</option>
+                <option value="jne">JNE</option>
+                <option value="pos">Pos Indonesia</option>
+                <option value="tiki">TIKI</option>
+            `)
+            $('#courier_service').empty();
+            $('#tableSevice').empty()
+            $('#courier_service').append('<option value="">--Null--</option>')
+            $('#tableSevice').append('<tr><tr/>')
+            $('#courier_ket').text('--Null--')
+            $('#ongkir').text('Rp. 0')
+
+        })
+
+    });
+</script>
+{% endblock script %}

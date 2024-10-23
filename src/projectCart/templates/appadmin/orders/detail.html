@@ -1,0 +1,293 @@
+{% extends 'appadmin/base.html' %}
+{% load static %}
+
+<!-- Title -->
+{% block title %}
+    Admin | Order Detail - {{request.order}}
+{% endblock title %}
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+{% include 'appadmin/include/alerts.html' %}
+
+<div class="header bg-primary">
+    <div class="row">
+        <div class="header-body">
+            <div class="row align-items-center">
+                <div class="col-lg-10 col-8">
+                    <nav aria-label="breadcrumb" class="d-md-inline-block">
+                        <ol class="breadcrumb ">
+                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'orders' %}">Order</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Order Detail - {{request.order}}</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for order in order %}
+<div class="row">
+    <!-- Informasin Address  -->
+    <div class="col-md-8 mt-4">
+        <div class="card h-100 mb-4">
+        <div class="card-header pb-0 px-3">
+            <div class="row">
+            <div class="col-md-6">
+                <h6 class="mb-0">Informasi Adreess</h6>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end align-items-center">
+                Create : &nbsp;
+                <i class="far fa-calendar-alt me-2"></i>
+                <small>{{order.created_at|date:"d M Y"}}</small>
+            </div>
+            </div>
+        </div>
+        <div class="card-body pt-4 p-3">
+            <div class="row col-12">
+                <div class="col">
+                    <h6 class="text-uppercase text-body text-xs font-weight-bolder">Shipping Address</h6>
+                    <ul class="list-group">
+                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-user"></i></button>
+                            <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">{{order.address.full_name}}</h6>
+                                <span class="text-xs">{{order.address.first_name}}</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-address-book"></i></button>
+                            <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">{{order.address.email}}</h6>
+                                <span class="text-xs">Phone :{{order.order_number}}</span>
+                            </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-icon-only btn-rounded btn-outline-warning mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-map-pin"></i></button>
+                                <div class="d-flex flex-column">
+                                    <h6 class="mb-1 text-dark text-sm">{{order.address.district.province}}, {{order.address.district.city.name}}, {{order.address.district.name}}</h6>
+                                    <span class="text-xs">{{order.address.full_address}}, <br>
+                                        pos: {{order.address.district.city.post_code}}</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-3 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-icon-only btn-rounded btn-outline-dark mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-truck"></i></button>
+                                <div class="d-flex flex-column">
+                                    <h6 class="mb-1 text-dark text-sm">{{order.orderdelivery.courier}}</h6>
+                                    <span class="text-xs">{{order.orderdelivery.total_weight}} (gram)</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="d-flex justify-content-between">
+                        <div class="author align-items-center">
+                            <div class="name ps-3">
+                                <span>Order Number :&nbsp;{{order.order_number}}</span>
+                                <div class="stats">
+                                    <h6 class="text-sm opacity-7 mt-1">Total: 1 Paket ({{order.get_sum_total_quantity}} Product)</h6>
+                                </div>
+                                <h6 class="text-sm opacity-7 mt-1">Status : 
+                                <span class="mb-1 badge badge-sm {% if order.status == 'PENDING' %} bg-gradient-warning 
+                                    {% elif order.status == 'CANCELLED' %} bg-gradient-danger 
+                                    {% elif order.status == 'CONFIRM' %} bg-gradient-primary
+                                    {% elif order.status == 'ON_THE_WAY' %} bg-gradient-info
+                                    {% else %} bg-gradient-success {% endif %}"
+                                >{{order.status}}</span>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mt-1">Billing Address</h6>
+                    <ul class="list-group">
+                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-user"></i></button>
+                            <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">{{order.user.full_name}}</h6>
+                                <span class="text-xs">{{order.user}}</span>
+                            </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-address-book"></i></button>
+                            <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">{{order.user.email}}</h6>
+                                <span class="text-xs">Phone :{{order.user.phone_number}}</span>
+                            </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+        </div>
+    </div>
+    <!-- Note Order -->
+    <div class="col-md-4 mt-4">
+        <div class="card">
+        <div class="card-body pt-4 p-3">
+            <ul class="list-group">
+                <li class="list-group-item border-0 d-flex p-4 mb-2 mt-3 bg-gray-100 border-radius-lg">
+                    <div class="d-flex flex-column">
+                    <h6 class="mb-3 text-sm">Note Order</h6>
+                        <span class="mb-2 text-xs">Note: <br><span class="text-dark font-weight-bold ms-sm-2 mb-2">{{order.order_note}}</span></span>
+                    </div>
+                    <div class="ms-auto text-end">
+                    <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- Detail Product -->
+<div class="row">
+    <div class="col-md-8 mt-4">
+        <div class="card h-100 mb-4">
+            <div class="card-header pb-0 px-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-icon-only btn-rounded btn-outline-warning me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-money-bill"></i></button>
+                            <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">Informasi Payment</h6>
+                                <p class="text-xs">Status Pay :
+                                <span class="mb-1 badge badge-sm {% if order.payment.status == 'pending' %} bg-gradient-warning 
+                                                    {% elif order.payment.status == 'cancel' or order.payment.status == 'denny' or order.payment.status == 'expire' %} bg-gradient-secondary
+                                                    {% elif order.payment.status == 'failure' %} bg-gradient-danger
+                                                    {% elif order.payment.status == 'refund' %} bg-gradient-info
+                                                    {% elif order.payment.status == 'capture' or order.payment.status == 'settlement' %} bg-gradient-success
+                                                    {% endif %}"
+                                >
+                                {{ order.payment.status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-end align-items-center">
+                    <i class="far fa-calendar-alt me-2"></i>
+                    <small>{{order.updated_at|date:"d M Y"}}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-4 p-3">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" width="500px">Product</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sub Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">
+                                        {% for item in order.orderproduct_set.all %}
+                                        <div class="d-flex px-2 py-1 mb-2">
+                                            <div class="d-flex flex-column justify-content-center" style="width: 20px;">
+                                                <h6 class="mb-0 text-xs">{{forloop.counter}}</h6>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <img src="{{item.product.product.images.url}}" class="avatar avatar-sm me-3">
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center" style="width: 200px;">
+                                                <h6 class="mb-0 text-xs">{{item.product.product.name}}</h6>
+                                                <p class="text-xs text-secondary mb-0">
+                                                    {% if item.variation.all %}
+                                                        {% for i in item.variation.all %}
+                                                            {{ i.varian_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center" style="width: 150px;">
+                                                <p class="text-xs text-secondary">
+                                                    Rp. {{item.product_price}}
+                                                </p>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center" style="width: 100px;">
+                                                <p class="text-xs text-secondary">
+                                                    x&nbsp;{{item.quantity}}
+                                                </p>
+                                            </div>
+
+                                            <div class="d-flex flex-column justify-content-center mt-0">
+                                                <p class="mb-0 text-xs">Rp. {{item.sub_total}}</p>
+                                            </div>
+                                            <hr>
+                                        </div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td class="align-middle text-end">
+                                        <h6 class="mb-0 text-xs font-weight">Total Order :</h6>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <h6 class="font-weight-bold mb-0 text-xs">Rp. {{order.get_sum_total}}</h6>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="align-middle text-end">
+                                        <h6 class="mb-0 font-weight text-xs">Tak :</h6>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <h6 class="font-weight-bold mb-0 text-xs">Rp. {{order.tax}}</h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="align-middle text-end">
+                                        <h6 class="mb-0 font-weight text-xs">Discon :</h6>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <h6 class=" font-weight-bold mb-0 text-xs">Rp. {{0}}</h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="align-middle text-end">
+                                        <h6 class="mb-0 font-weight text-xs">Shipping Adreess :</h6>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <h6 class="font-weight-bold mb-0 text-xs">Rp. {{order.orderdelivery.cost}}</h6>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="align-middle text-end">
+                                        <h6 class="mb-0 font-weight text-xs">Grand Total :</h6>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <h6 class="font-weight-bold mb-0">Rp. {{order.payment.amount_paid}}</h6>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}{% endblock javascripts %}

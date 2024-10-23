@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html class=''>
+<head>
+    <meta charset='UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>Chat</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ----------> 
+    
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+    <link rel="stylesheet" href="{% static 'css/chat/style.css' %}">
+
+</head>
+<body>
+    <div id="frame">
+        {% include 'chat/includes/sidepanel.html' %}
+
+        <div class="content">
+            <div class="col-md-12 text-center" style="position: absolute; top: text-center; bottom: text-center;">
+                <div id="chat_icon" class="" >
+                    <div class="" >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-wechat" viewBox="0 0 16 16">
+                            <path d="M11.176 14.429c-2.665 0-4.826-1.8-4.826-4.018 0-2.22 2.159-4.02 4.824-4.02S16 8.191 16 10.411c0 1.21-.65 2.301-1.666 3.036a.324.324 0 0 0-.12.366l.218.81a.616.616 0 0 1 .029.117.166.166 0 0 1-.162.162.177.177 0 0 1-.092-.03l-1.057-.61a.519.519 0 0 0-.256-.074.509.509 0 0 0-.142.021 5.668 5.668 0 0 1-1.576.22ZM9.064 9.542a.647.647 0 1 0 .557-1 .645.645 0 0 0-.646.647.615.615 0 0 0 .09.353Zm3.232.001a.646.646 0 1 0 .546-1 .645.645 0 0 0-.644.644.627.627 0 0 0 .098.356Z"/>
+                            <path d="M0 6.826c0 1.455.781 2.765 2.001 3.656a.385.385 0 0 1 .143.439l-.161.6-.1.373a.499.499 0 0 0-.032.14.192.192 0 0 0 .193.193c.039 0 .077-.01.111-.029l1.268-.733a.622.622 0 0 1 .308-.088c.058 0 .116.009.171.025a6.83 6.83 0 0 0 1.625.26 4.45 4.45 0 0 1-.177-1.251c0-2.936 2.785-5.02 5.824-5.02.05 0 .1 0 .15.002C10.587 3.429 8.392 2 5.796 2 2.596 2 0 4.16 0 6.826Zm4.632-1.555a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0Zm3.875 0a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0Z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- form chat -->
+            <div id="chat_form" class="hidden" >
+                <div class="contact-profile">
+                    <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+                    <p id="account_name">{{room.client}}</p>
+                    <div class="social-media">
+                        <i class="fa fa-facebook" aria-hidden="true"></i>
+                        <i class="fa fa-twitter" aria-hidden="true"></i>
+                        <i class="fa fa-instagram" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="messages">
+                    <ul id="chat_log">
+
+                        {% for message in rooms.messages.all %}
+        
+                            {% if not message.created_by %}
+                                <li class="sent ms-3 md-3">
+                                    <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+                                    <p class="small p-2 ms-3 mb-1 rounded-xl">{{message.body}}</p><br>
+                                    <a class=" ms-3 mb-3 rounded-3 text-muted">{{ message.created_at|timesince }} ago</a>
+        
+                                </li>
+                            {% else %}
+                                <li class="replies ms-3 md-3">
+                                    <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+                                    <p class="small p-2 me-3 mb-1 ">{{message.body}}</p><br><br><br>
+                                    <a class="me-3 mb-3 md-3 rounded-3 text-muted d-flex justify-content-end">{{message.created_at|timesince}} ago</a>
+                                </li>
+                            {% endif %}
+        
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="message-input">
+                    <div class="wrap">
+                        <div class="mb-3">
+                            <input id="chat-message-input" type="text" placeholder="Write your message..." />
+                        </div>
+                        <div class="mb-3">
+                            <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+                            <button id="chat-message-submit" class="submit">
+                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/chat/main.js' %}"></script>
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    
+    {{ rooms.uuid|json_script:"room_uuid" }}
+    {{ request.account.fuul_name|json_script:"account_name" }}
+    {{ request.account.id|json_script:"account_id" }}
+    
+    <script>
+        //ELemnet
+
+        let chatSocket = null
+        let chatWindowUrl = window.location.href
+
+        const chatAuthorMessage = document.querySelector('#chat_author');
+        const chatIconMessage = document.querySelector('#chat_icon');
+        const chatFormMessage = document.querySelector('#chat_form');
+        const chatInputMessage = document.querySelector('#chat-message-input'); 
+        const chatButtonMessage = document.querySelector('#chat-message-submit'); 
+
+        const chatLogElement = document.querySelector('#chat_log');
+        
+        const roomUuid = JSON.parse(document.querySelector('#room_uuid').textContent);
+        
+
+        chatInputMessage.focus();
+        chatInputMessage.onkeyup = function(e) {
+            if (e.key === 'Enter' ) {  // enter, return
+                chatButtonMessage.click();
+            }
+        };
+
+        chatButtonMessage.onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'command': 'new_message',
+                'message': message,
+                'from': username
+            }));
+
+            messageInputDom.value = '';
+        };
+
+        /**
+         * Function
+        */
+        function scrollToBottom() {
+            chatLogElement.scrollTop = chatLogElement.scrollHeight
+        }
+        
+        async function joinMessageRoom(e) {
+            console.log('Client:' )
+
+            let room_uuid = document.getElementById('uuid').value
+            console.log('Room id:', room_uuid )
+
+            const data = new FormData()
+            data.append('room_uuid', room_uuid)
+
+            // await fetch('/chat/room_uuid/', {
+            //     method: 'GET',
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+                
+            // })
+            // .then(function(e) {
+            //     console.log('succes', 'ok')
+            //     return Response.json(data)
+            // })
+            // .then(function(e) {
+            //     console.log('succes', 'ok')
+            // })
+
+            chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${room_uuid}/`);
+
+            chatSocket.onmessage = function(e) {
+                console.log('onmessage')
+
+                onChatMessage(JSON.parse(e.data))
+            }
+
+            chatSocket.onopen = function(e) {
+                console.log('onopen - chat socket was opened')
+                scrollToBottom()
+            }
+
+            chatSocket.onclose = function(e) {
+                console.log('onClose - chat socket was closed')
+            }
+        }
+
+        chatAuthorMessage.onclick = function (e) {
+            chatIconMessage.classList.add("hidden")
+            chatFormMessage.classList.remove("hidden")
+
+            joinMessageRoom()
+        }
+
+    </script>
+</body>
+</html>

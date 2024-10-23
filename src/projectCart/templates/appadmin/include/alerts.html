@@ -1,0 +1,19 @@
+{% if messages %}
+    {% for message in messages %}
+    <div id="message" class="container">
+        <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show"{% endif %} role="alert">
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <span class="alert-icon"><i class="fas fa-exclamation"></i></span>
+            <span class="alert-text"> Error: </span>
+            {% else %}
+            <span class="alert-icon"><i class="fas fa-check"></i></span>
+            <span class="alert-text"> Success: </span>
+            {% endif %}
+            <span class="alert-text"><strong>{{ message }} !</strong></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}

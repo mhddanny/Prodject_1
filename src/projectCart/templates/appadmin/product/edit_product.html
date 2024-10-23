@@ -1,0 +1,1013 @@
+{% extends 'appadmin/master.html' %}
+{% load static %}
+{% block title %}
+    Admin | Product {{title}}
+{% endblock title %}
+
+{% block stylesheets %}
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+{% include 'appadmin/include/alerts.html' %}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+
+    <nav aria-label="breadcrumb ">
+        <ol class="breadcrumb breadcrumb-style1 p-2">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard_admin' %}" style="font-size: large;">Home</a>
+            </li>
+            {% if title == 'Add' or title == 'Edit'%}
+            <li class="breadcrumb-item">
+                <a href="{% url 'products' %}" style="font-size: large;">Product</a>
+            </li>
+            <li class="breadcrumb-item active" style="font-size: large;">{{title}}</li>
+            {% else %}
+            <li class="breadcrumb-item active" style="font-size: large;">Products</li>
+            {% endif %}
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="alert-box"></div>
+            <form id="p-form" action="" method="POST" enctype="multipart/form-data" class="dropzone">                
+                {% csrf_token %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        {% if product.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Product errors</strong>
+                        </div>
+                        {% endif %}
+                        <p class="text-uppercase text-sm">Product Information</p>
+                        <div class="row">
+                            <div class="form-group mb-3">
+                                <label for="example-text-input" class="form-label">Name Product</label>
+                                <!-- <input class="form-control" type="text" placeholder="Nama Product" > -->
+                                {{product.name}}
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="exampleDataList" class="form-label">Caregory</label>
+                                {{product.category}}
+                            </div> 
+                            <div class="form-group mb-3">
+                                <label for="example-text-input" class="form-label">Description</label>
+                                <!-- <input class="form-control" type="text" placeholder="Short Description" > -->
+                                {{product.description}}
+                            </div>
+
+                            <div class="form-group mt-3 mb-3">
+                                <label for="example-text-input" class="form-label">Image Utama</label>
+                                <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                    <span id="productImageNew">
+                                        <img
+                                          src="{% static 'images/default.png' %}"
+                                          name="image_product"
+                                          alt="user-avatar"
+                                          class="d-block rounded"
+                                          height="100"
+                                          width="100"
+                                          id="uploadedProduct"
+                                        />
+                                    </span>
+                                    <div class="button-wrapper">
+                                      <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
+                                        <span class="d-none d-sm-block">Upload new photo</span>
+                                        <i class="bx bx-upload d-block d-sm-none"></i>
+                                        <input
+                                          type="file"
+                                          id="upload"
+                                          name="image_product"
+                                          class="product-file-input"
+                                          hidden
+                                          accept="image/png, image/jpeg"
+                                          
+                                        />
+                                      </label>
+                                      <button type="button" class="btn btn-outline-secondary product-image-reset mb-4">
+                                        <i class="bx bx-reset d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Reset</span>
+                                      </button>
+            
+                                      <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 1MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="formFile" class="form-label">Images</label>
+                                <!-- <p class="text-muted mb-3">Allowed: max 5 picture, type:JPG, GIF or PNG. Max size of 1MB</p> -->
+                                <!-- {{item_images.management_form}} -->
+                                <!-- {% if title == 'Edit' %}
+                                    {% for f in item_images %}
+                                        {{f.image}}<br>
+                                    {% endfor %}
+                                {% else %}
+                                    {{item_images.image}}
+                                {% endif %} -->
+                                <!-- <input type="file" name="image" multiple class="form-control" id="id_image"> -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="row px-5" id="img-box">
+                                <div class="col-auto mb-2 mt-2 text-center " id="productGalery-1">
+                                    <label for="formFile1" class="btn btn-outline-primary btn-sm auto labelGalery" id="labelGalery-galery-1">
+                                        <i class='bx bx-icon bx-image-add bx-lg text-muted text-center' style="height: 55px; width: 75px; margin-top: 25px;"></i>
+                                        <input type="file" id="formFile1" name="galery_product" class="input-Galery-1 inputGalery" hidden="" accept="image/png, image/jpeg" title="galery-1">
+                                        <div class="text-muted textImage mt-0" id="textImage">Image 1</div>
+                                    </label>
+                                    <a class="image rounded mb-2 cardGalery" id="cardGalery-galery-1" hidden>
+                                        <img src="{% static 'images/default.png' %}" alt="product_image" class="border-radius-lg shadow-sm previewGalery" id="previewGalery-galery-1" name="images" style="height: 100px; width: 100px;">
+                                    </a><br>
+                                    <button id="resetGalery-galery-1" type="button" class="btn rounded-pill btn-icon btn-sm btn-outline-danger mt-2 text-center resetGalery" title="galery-1" hidden>
+                                        <i class="bx bx-trash-alt"></i>
+                                    </button>
+                                </div>
+                                <div class="col-auto mb-2 mt-2 text-center " id="productGalery-2">
+                                    <label for="formFile2" class="btn btn-outline-primary btn-sm auto labelGalery" id="labelGalery-galery-2">
+                                        <i class='bx bx-icon bx-image-add bx-lg text-muted text-center' style="height: 55px; width: 75px; margin-top: 25px;"></i>
+                                        <input type="file" id="formFile2" name="galery_product" class="input-Galery-2 inputGalery" hidden="" accept="image/png, image/jpeg" title="galery-2">
+                                        <div class="text-muted textImage" id="textImage">Image 2</div>
+                                    </label>
+                                    <a class="image rounded mb-2 cardGalery" id="cardGalery-galery-2" hidden>
+                                        <img src="{% static 'images/default.png' %}" alt="product_image" class="border-radius-lg shadow-sm previewGalery" id="previewGalery-galery-2" name="images" style="height: 100px; width: 100px;">
+                                    </a><br>
+                                    <button id="resetGalery-galery-2" type="button" class="btn rounded-pill btn-icon btn-sm btn-outline-danger mt-2 text-center resetGalery" title="galery-2" hidden>
+                                        <i class="bx bx-trash-alt"></i>
+                                    </button>
+                                </div>
+                                <div class="col-auto mb-2 mt-2 text-center " id="productGalery-3">
+                                    <label for="formFile3" class="btn btn-outline-primary btn-sm auto labelGalery" id="labelGalery-galery-3">
+                                        <i class='bx bx-icon bx-image-add bx-lg text-muted text-center' style="height: 55px; width: 75px; margin-top: 25px;"></i>
+                                        <input type="file" id="formFile3" name="galery_product" class="input-Galery-3 inputGalery" hidden="" accept="image/png, image/jpeg" title="galery-3">
+                                        <div class="text-muted textImage" id="textImage">Image 3</div>
+                                    </label>
+                                    <a class="image rounded mb-2 cardGalery" id="cardGalery-galery-3" hidden>
+                                        <img src="{% static 'images/default.png' %}" alt="product_image" class="border-radius-lg shadow-sm previewGalery" id="previewGalery-galery-3" name="images" style="height: 100px; width: 100px;">
+                                    </a><br>
+                                    <button id="resetGalery-galery-3" type="button" class="btn rounded-pill btn-icon btn-sm btn-outline-danger mt-2 text-center resetGalery" title="galery-3" hidden>
+                                        <i class="bx bx-trash-alt"></i>
+                                    </button>
+                                </div>
+                                <div class="col-auto mb-2 mt-2 text-center " id="productGalery-4">
+                                    <label for="formFile4" class="btn btn-outline-primary btn-sm auto labelGalery" id="labelGalery-galery-4">
+                                        <i class='bx bx-icon bx-image-add bx-lg text-muted text-center' style="height: 55px; width: 75px; margin-top: 25px;"></i>
+                                        <input type="file" id="formFile4" name="galery_product" class="input-Galery-4 inputGalery" hidden="" accept="image/png, image/jpeg" title="galery-4">
+                                        <div class="text-muted textImage" id="textImage">Image 4</div>
+                                    </label>
+                                    <a class="image rounded mb-2 cardGalery" id="cardGalery-galery-4" hidden>
+                                        <img src="{% static 'images/default.png' %}" alt="product_image" class="border-radius-lg shadow-sm previewGalery" id="previewGalery-galery-4" name="images" style="height: 100px; width: 100px;">
+                                    </a><br>
+                                    <button id="resetGalery-galery-4" type="button" class="btn rounded-pill btn-icon btn-sm btn-outline-danger mt-2 text-center resetGalery" title="galery-4" hidden>
+                                        <i class="bx bx-trash-alt"></i>
+                                    </button>
+                                </div>
+                                <div class="col-auto mb-2 mt-2 text-center " id="productGalery-5">
+                                    <label for="formFile5" class="btn btn-outline-primary btn-sm auto labelGalery" id="labelGalery-galery-5">
+                                        <i class='bx bx-icon bx-image-add bx-lg text-muted text-center' style="height: 55px; width: 75px; margin-top: 25px;"></i>
+                                        <input type="file" id="formFile5" name="galery_product" class="input-Galery-5 inputGalery" hidden="" accept="image/png, image/jpeg" title="galery-5">
+                                        <div class="text-muted textImage" id="textImage">Image 5</div>
+                                    </label>
+                                    <a class="image rounded mb-2 cardGalery" id="cardGalery-galery-5" hidden>
+                                        <img src="{% static 'images/default.png' %}" alt="product_image" class="border-radius-lg shadow-sm previewGalery" id="previewGalery-galery-5" name="images" style="height: 100px; width: 100px;">
+                                    </a><br>
+                                    <button id="resetGalery-galery-5" type="button" class="btn rounded-pill btn-icon btn-sm btn-outline-danger mt-2 text-center resetGalery" title="galery-5" hidden>
+                                        <i class="bx bx-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>   
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <h6 class="card-header text-title text-muted">Long Description</h6>
+                    <div class="card-body">
+                        <div class="text-center">
+                            {{ myform.media }}
+                            {{product.long_description}}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card mb-3">
+                    <h6 class="card-header">Product Item</h6>
+                    <div class="card-body">
+                        <!-- Product Item -->
+                        <div class="row text-center">
+                            <label for="html5-text-input" class="col-md-2 col-form-label">Variation</label>
+                            <div class="col-md-10 text-start mb-3">
+                                
+                                <!-- Form Variantion 1 -->
+                                <div id="formVariation1" class="col-md-12 text-start mb-3" hidden >
+                                    <div class="card">
+                                        <div class="row card-header ">
+                                            <div class="col text-start">
+                                                <h6 id="header_card_1" class="text-start"></h6>
+                                            </div>
+                                            <div class="col text-end">
+                                                <a id="btnRemoveVariation1" type="button" href="javascript:void(0);" class="btn btn-sm rounded-pill btn-outline-danger"
+                                                    onclick="return confirm('Are you sure want to delete Variation Color ?')" >
+                                                    <i class='bx bx-minus-circle'></i> Batal
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group mb-2 col-5">
+                                                        <input type="text" class="form-control inputVariation1" id="inputVariation1" placeholder="Color">
+                                                    </div>
+                                                    <div id="inputTextVarian1">
+
+                                                    </div>
+                                                    <div class="form-check mt-2 mb-3 px-4">
+                                                        <input class="form-check-input" type="checkbox" id="imageVarian_1">
+                                                        <label for="checkbox" class="col-md-2 form-check-label" >Image</label>                                                        
+                                                    </div>
+                                                    <div class="card" id="cardImageVarian" hidden>
+                                                        <div class="col-12">
+                                                            <div class="row mt-3 px-3 rowImage">
+                                                                <div class="col-auto mb-2 text-center " id="imageVarian">
+                                                                    <label for="formVarian" class="btn btn-outline-primary btn-sm auto labelImage" id="labelImage">
+                                                                        <i class='bx bx-icon bx-image-add bx-lg text-muted text-center' style="height: 57px; width: 75px; margin-top: 25px;"></i>
+                                                                        <input type="file" name="image_variant" id="formVarian" class="input-varian-image" hidden="" accept="image/png, image/jpeg">
+                                                                        <div class="text-muted textImage" id="textImage"></div>
+                                                                    </label>
+                                                                    <a class="image rounded mb-2 cardImage" id="cardImage" hidden>
+                                                                        <img src="{% static 'images/default.png' %}" alt="product_image" class="border-radius-lg shadow-sm previewImage" id="previewImage" name="images" style="height: 100px; width: 100px;">
+                                                                    </a><br>
+                                                                    <button id="resetImage" type="button" class="btn rounded-pill btn-icon btn-sm btn-outline-danger mt-1 text-center resetImage" hidden>
+                                                                        <i class="bx bx-trash-alt"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Form Variantion 2 -->
+                                <div id="formVariation2" class="row mb-3" hidden>
+                                    <div class="card">
+                                        <div class="row card-header ">
+                                            <div class="col text-start">
+                                                <h6 id="header_card_2" class="text-start"></h6>
+                                            </div>
+                                            <div class="col text-end">
+                                                <a id="btnRemoveVariation2" type="button" href="javascript:void(0);" class="btn btn-sm rounded-pill btn-outline-danger" 
+                                                onclick="return confirm('Are you sure want to delete Variation Size ?')">
+                                                    <i class='bx bx-minus-circle'></i> Batal
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group mb-3 col-5">
+                                                        <input type="text" class="form-control inputVariation2" id="inputVariation2" placeholder="Size">
+                                                    </div>
+                                                    <div id="inputTextVarian2">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- BTN Variation 1 -->
+                                <div id="btnActiveVariation" class="btn-group mb-3">
+                                    <button type="button" class="btn rounded-pill btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class='bx bxs-add-to-queue'></i> Active Variantion
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                      <li><a id="variation_1" name="varian_category" class="dropdown-item" href="javascript:void(0);">Color</a></li>
+                                      <li><a id="variation_2" name="varian_category" class="dropdown-item" href="javascript:void(0);">Size</a></li>
+                                    </ul>
+                                </div>
+                                <div id="btnActiveVariation" class="btn-group mb-3">
+                                    {{varian.product_attribute}}
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div id="yesVariation">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive mb-3">
+                                        <table class="table table-bordered" id="tabelItemProduct">
+                                            <thead>
+                                                <tr>
+                                                    <td id="table_head_1" name="varian_category" ></td>
+                                                    <td id="table_head_2" name="varian_category"></td>
+                                                    <td>Price</td>
+                                                    <td>stock</td>
+                                                    <td class="col-1">Active</td>
+                                                    <td class="col-1">Default</td>
+                                                </tr>
+                                            </thead>
+                                            {% for item in item %}
+                                            <tBody id="tableBody">
+                                                <tr id="rowTable">
+                                                    <td id="table_body_1" class="table_body_1" rowspan="10">
+                                                        <div class="text-center mt-0 text_body_1 mb-1"></div>
+                                                        <div class="text-center mt-1 imageVarianTable" id="imageVarianTable">
+                                                        </div>
+                                                    </td>
+                                                    <td id="table_body_2" class="table_body_2">
+                                                        {% for i in item.variation.sizes %}
+                                                        <div class="text-center text_body_2" >{{i.variation_value}}</div>
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>{{item.price}}</td>
+                                                    <td>{{item.stock}}</td>
+                                                    <td class="text-center col-1">
+                                                        {{item.is_available}}
+                                                    </td>
+                                                    <td class="text-center text-muted col-1">
+                                                        <!-- <input id="id_is_default" type="checkbox" name="is_default" class="form-check-input" type="checkbox" aria-disabled="true" checked disabled=""> -->
+                                                         {{item.is_default}}
+                                                    </td>
+                                                </tr>
+                                            </tBody>
+                                            {% endfor %}
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                                
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- Dimension Peoduct -->
+                <div class="card mb-3">
+                    <h6 class="card-header text-title text-muted">Product Dimension</h6>
+                    <div class="card-body">
+                        {% if paket.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Product Paket Dimension errors</strong>
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="example-text-input" class="form-label">Berat</label>
+                                    {{paket.weight}}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="example-text-input" class="form-label">Panjang</label>
+                                    {{paket.length}}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="example-text-input" class="form-label">Lebar</label>
+                                    {{paket.width}}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="example-text-input" class="form-label">Tinggi</label>
+                                    {{paket.height}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Button -->
+                 <div class="col-md-12">
+                    <div class="col">
+                        <button type="submit" class="btn rounded-pill btn-primary">Submit</button>
+                    </div> 
+                 </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        // Add Variation 1
+        $('#variation_1').on('click', function () {
+            $('#header_card_1').text('Color');
+            $('#table_head_1').text('Color');
+            $('#formVariation1').removeAttr('hidden');
+            $('#noVariation').attr({
+                hidden: true,
+                disabled: true,
+            });
+            //$('#noVariation').children().find('input').removeAttr('name value required');
+            $('#variation_1').addClass('disabled');
+            $('#yesVariation').removeAttr('hidden');
+            $('#table_head_1').removeAttr('hidden');
+            $('#table_body_1').removeAttr('hidden');
+            $('#imageVarian_1').attr('disabled', true);
+        });
+        // Remove Variation 1
+        $('#btnRemoveVariation1').click(function () {
+            $('#formVariation1').attr('hidden', true);
+            $('#inputVariation1').val('');
+            $('#noVariation').attr({
+                hidden: false,
+            });
+            $('#id_price').attr('name', 'price');
+            $('#id_stock').attr('name', 'stock');
+            
+            $('#btnActiveVariation').removeAttr('hidden');
+            $('#variation_1').removeClass('disabled');
+            $('#table_head_1').text('');
+            $('.text_body_1').text('');
+            $('.text_body_1').children().remove();
+            $('#yesVariation').attr('hidden', 'true');
+            $('.labelImage').removeAttr('src')
+            $('.labelImage').attr('hidden', 'false');
+            $('.input-varian-image').val('')
+            $('.textImage').text('')
+            $('.previewImage').removeAttr('src')
+            $('.cardImage').attr('hidden', 'true')
+            $('.resetImage').attr('hidden', 'true')
+            $('#imageVarianTable').children().remove();
+        });
+
+        // click btnProduct
+        $().fancybox({
+            selector : '.slick-slide:not(.slick-cloned)',
+            hash     : false
+        });
+
+        var resetImage = $('#resetImage');
+
+        // checkobox image varian
+        $('#imageVarian_1').on('click',function () {
+            if ( $(this).attr('checked')) {
+                $(this).attr('checked', false);
+                console.log('not ok');
+                
+                $('#cardImageVarian').attr('hidden', true);
+                $('#tabelItemProduct tbody').each(function () {
+                    $(this).find('.table_body_1').each(function () {
+                        //console.log('image', this);
+                        $(this).find('.imageVarianTable').each(function () {
+                            $(this).attr('hidden', true);
+                        });
+                    });
+                });
+
+            } else {
+                $(this).attr('checked', 'checked');
+                console.log('ok');
+                $('#cardImageVarian').attr('hidden', false);
+                //table item product image
+                $('#tabelItemProduct tbody').each(function () {
+                    $(this).find('.table_body_1').each(function () {
+                        //console.log('image', this);
+                        $(this).find('.imageVarianTable').each(function () {
+                            $(this).attr('hidden', false);
+                        });
+                    });
+                });
+                
+                
+            }
+        });
+
+        function readURL(input) {
+            console.log('readURL', input.class, input.value);
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#previewImage-'+input.title).attr('src', e.target.result);
+                    $('#img-'+input.title ).attr('src', e.target.result);
+                    $('.'+input.title ).attr('src', e.target.result);
+                    $('#cardImage-'+input.title ).attr('href', e.target.result);
+                    $('#cardImage-'+input.title ).attr('data-fancybox',input.title);
+                    $('#cardImage-'+input.title ).attr('data-caption',input.title);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+            $('#cardImage-'+input.title ).attr('hidden', false);
+            $('#labelImage-'+input.title ).attr('hidden', true);
+            $('#resetImage-'+input.title).attr('hidden', false);
+        }
+
+        $('.labelImage').each(function () {
+            $(this).on('click', function (event) {
+                title = this.title;
+                console.log('title', title);
+                if (title) {
+                    $(this).find('#formVarian-'+title).on('change', function(e) {
+                        //console.log(this);
+                        readURL(this);
+                    });
+                }
+            });
+        });
+
+        //$('.labelImage').each(function () {
+        //    $(this).on('click', function (event) {
+        //        // upload the image to the server
+        //        console.log($(event));
+        //        var title = $(this).find('#upload')[0]['attributes']['title']['value'];
+        //        console.log(title);
+        //        $(this).find('.input-varian-image').change(function () {
+        //            console.log(this);
+        //            //readURL(this);
+        //            if (this.files && this.files[0]) {
+        //                var reader = new FileReader();
+         //               reader.onload = function (e) {
+        //                    $('#previewImage-'+ title ).attr('src', e.target.result);
+        //                    $('#img-'+ title ).attr('src', e.target.result);
+        //                    $('.' + title ).attr('src', e.target.result);
+        //                }
+        //                reader.readAsDataURL(this.files[0]);
+        //            }
+                    
+        //            $('#labelImage-'+ title).attr('hidden', true);
+        //            $('#cardImage-'+ title).attr('hidden', false);
+        //            $('#resetImage-'+ title).attr('hidden', false);
+        //        });
+        //    }); 
+        //});
+
+        //reset image url
+        $('.resetImage').click(function () {
+            console.log('remove :',this)
+            title = this.title;
+            $('#previewImage-'+title).attr('src', '');
+            $('#img-'+title).attr('src', '/static/images/default.png');
+            $('#cardImage-'+title).attr('src', '');
+
+            $('#cardImage-'+title).attr('hidden', true);
+            $('#resetImage-'+title).attr('hidden', true);
+            $('#labelImage-'+title).attr('hidden', false);
+        });
+
+
+        var inputVariation1 = document.getElementById('inputVariation1');
+        var tagify1 = new Tagify(inputVariation1, {
+            texts: {
+            duplicate: "Duplicates are not allowed"
+            }
+        });
+        // Create the input tag with table body 1
+        tagify1.on('input', function(event) {
+            //console.log(event);
+            //console.log('add', event['detail']['value']);
+            $('#rowTable').attr('hidden', false);
+
+        });
+        // add or edit tagify 
+        tagify1.on('add', function (event) {
+            var inputVariation = event['detail']['data']['value'];
+            var idTrigger = event['detail']['data']['__tagId']
+            $('<input/>').attr({
+                type: 'text',
+                value: inputVariation,
+                class: 'input-'+idTrigger,
+                name: 'color',
+                hidden: true,
+            }).appendTo('#inputTextVarian1');
+            //console.log('idTrigger', idTrigger)
+            $('#rowTable').attr('hidden', false);
+            $('#imageVarian_1').attr('disabled', false);
+            value = event['detail']['tagify']['value']
+            // If the input value for tagify is different from the value
+            if ( value.length > 1) {
+                // Clone the table body 1
+                var input = $('#tableBody').clone(true).find('#table_body_1').end().insertAfter('#tableBody:last');
+                //Add the new title
+                input.attr('title', idTrigger);
+                input.find('.text_body_1').text(inputVariation); // TOD add input new table
+                
+                
+                input.find('#table_body_1').attr('title', idTrigger); // TOD add title
+                input.find('#id_is_default').attr({
+                    checked: false, 
+                    value: 'false',
+                }); //
+                input.find('.imageVarianTable').children().attr({
+                    id: 'img-'+inputVariation,
+                    src: '/static/images/default.png',
+                }); // TOD add input new image
+
+                // Clone the imageVarian
+                var imageVarian = $('#imageVarian').clone(true); // TOD add title
+                imageVarian.attr('title', inputVariation); // TOD add title
+                imageVarian.attr('alt', idTrigger); // TOD add idTrigger
+                imageVarian.find('.labelImage').attr({
+                    id: 'labelImage-'+inputVariation,
+                    title: inputVariation,
+                    for: 'formVarian-'+inputVariation,
+                    hidden: false,
+                }); // TOD label add id
+                imageVarian.find('.textImage').text(inputVariation); // TOD add new image text
+                imageVarian.find('.input-varian-image').attr({
+                    title: inputVariation,
+                    id: 'formVarian-'+inputVariation,
+                    value: ''
+                }); // TOD add input new image title
+                imageVarian.find('.cardImage').attr({
+                    id: 'cardImage-'+inputVariation,
+                    hidden: true,
+                }); // TOD add id card image
+                imageVarian.find('.previewImage').attr('id','previewImage-'+inputVariation ); // TOD add class
+                imageVarian.find('.resetImage').attr({
+                    id: 'resetImage-'+inputVariation,
+                    title: inputVariation,
+                    hidden: true,
+                }); // TOD reset id card image
+                
+                $('.rowImage').append(imageVarian); // TOD add new tabel image
+
+                //console.log(input);
+                // Append to table body 1
+                $('#yesVariation table tbody').append(input);
+                
+            }else {
+                var rowtable = $(this).parent();
+                console.log('row', rowtable);
+                //table varian
+                $('#tableBody').attr('title', idTrigger)
+                $('#table_body_1').attr('title', idTrigger)
+                $('.text_body_1').text(inputVariation);
+                
+                // image table varian
+                $('#imageVarianTable').append('<img src="/static/images/default.png" id="img-'+inputVariation+'" class="'+inputVariation+'" alt="'+inputVariation+'" name="images" style="height: 60px; width: 60px;"/>').children(); // TOD
+                $('#imageVarianTable').attr('hidden', 'true');
+                
+                // image varian
+                $('#imageVarian').attr({
+                    title: inputVariation,
+                    alt: idTrigger,
+                });  
+                $('.labelImage').attr({
+                    id: 'labelImage-'+inputVariation,
+                    title: inputVariation,
+                    for: 'formVarian-'+inputVariation,
+                });
+                $('.cardImage').attr('id','cardImage-'+inputVariation); // TOD add id card image
+                $('.resetImage').attr({
+                    id: 'resetImage-'+inputVariation,
+                    title: inputVariation,
+                }); // TOD add id button resset
+                $('.input-varian-image').attr({
+                    title: inputVariation,
+                    id: 'formVarian-'+inputVariation,
+                });
+                $('.previewImage').attr('id','previewImage-'+inputVariation);
+
+                $('.textImage').text(inputVariation)
+
+            }
+        });
+
+        // Delete the input element table body1
+        tagify1.on('remove', function (event) {
+            // remove the input element table body
+            var idTrigger = event['detail']['data']['__tagId']
+            console.log('idTrigger', idTrigger)
+            //remove the input element #inputTextVarian1
+            $('.input-'+idTrigger).remove();
+
+
+            $('#imageVarian_1').attr('disabled', true);
+            var tbody = $('#tabelItemProduct tbody')
+            // check if tbody length is > 1
+            if (tbody.length > 1 ){
+                // remove the image table varian
+                $('.rowImage #imageVarian').each(function(){
+                    var target = $(this)[0]['attributes']['alt']['value'];
+                    //console.log('img',target);
+                    if (target == idTrigger ) {
+                        $(this).remove();
+                    }
+                })
+
+                // function remove tbody  > 1
+                $('#yesVariation table').find('tbody').each(function() {
+                    var target = $(this)[0]['attributes']['title']['value'];
+                    if (target == idTrigger) {
+                        $(this).remove();
+                    }
+                });
+                // function remove tbody tr > 1
+                seen = {};  
+                $('table tbody #table_body_1').each(function() {
+                    var text = $(this).text();
+                    if (seen[text]) {
+                        var index = $('#tableBody #rowTable').index($(this));
+                        $('#yesVariation table tbody').eq(index).find('tr').remove();
+                    }
+                    seen[text] = true;
+                });
+
+            } else {
+                $('#imageVarian').each(function(){
+                    var target = $(this)[0]['attributes']['alt']['value'];
+                    if (target == idTrigger ) {
+                        $(this).find('.labelImage').removeAttr('src')
+                        $(this).find('.input-varian-image').val('')
+                        $(this).find('.textImage').text('')
+                        $(this).find('.previewImage').removeAttr('src')
+                        $(this).find('.cardImage').attr('hidden', 'true')
+                        $(this).find('.resetImage').attr('hidden', 'true')
+                        $('#imageVarianTable').children().remove();
+                        //$('#imageVarianTable').attr('hidden', false)
+                        
+                    }
+                })
+
+                console.log('images', images)
+
+                // function remove tbody = 1
+                $('#yesVariation table').find('tbody').each(function() {
+                    var target = $(this)[0]['attributes']['title']['value'];
+                    //console.log('title', target);
+                    if (target == idTrigger) {
+                        $(this).find('.text_body_1').text('');
+                        $(this).find('.text_body_1').children.remove();
+                    }
+
+                });
+                // function remove tbody tr = 1
+                //check if tag removed from the input element table
+                seen = {};  
+                $('table tbody #table_body_1').each(function() {
+                    var text = $(this).text();
+                    if (seen[text]) {
+                        var index = $('#tableBody #rowTable').index($(this));
+                        //console.log('i',index);
+                        $(this).text('');
+                    }
+                    seen[text] = true;
+                });
+            }
+            
+            
+        });
+        
+        $('#variation_2').on('click', function () {
+            $('#formVariation2').removeAttr('hidden');
+            $('#noVariation').attr('hidden', true);
+            $('#header_card_2').text('Size')
+            $('#table_head_2').text('Size');
+            $('#variation_2').addClass('disabled');
+            $('#yesVariation').removeAttr('hidden');
+            $('#table_head_2').removeAttr('hidden');
+            $('.table_body_2').removeAttr('hidden');
+        });
+        
+        $('#btnRemoveVariation2').click(function () {
+            $('#formVariation2').attr('hidden', true);
+            $('#inputVariation2').val('');
+            $('#variation_2').removeClass('disabled');
+            $('#table_head_2').text('');
+            $('#table_head_2').attr('hidden', 'true');
+            $('#table_body_2').text('');
+            $('#table_body_2').children().remove();
+            $('#table_body_2').attr('hidden', 'true');
+            //$('#noVariation').attr('hidden', false);
+            //$('#yesVariation').attr('hidden', 'true');
+        });
+
+        var inputVariation2 = document.getElementById('inputVariation2');
+        var tagify2 = new Tagify(inputVariation2, {
+            texts: {
+            duplicate: "Duplicates are not allowed"
+            }
+        });
+
+        tagify2.on('add', function (event) {
+            var inputVariation = event['detail']['data']['value'];
+            $('#rowTable').attr('hidden', false);
+            $('#table_body_2').attr('hidden', false);
+            //console.log('add2', event )
+            value = event['detail']['tagify']['value']
+            var idTrigger = event['detail']['data']['__tagId']
+            $('<input/>').attr({
+                type: 'text',
+                value: inputVariation,
+                class: 'input-'+idTrigger,
+                name: 'size',
+                hidden: true,
+            }).appendTo('#inputTextVarian2');
+
+            if ( value.length > 1) {
+                // If tbody is more than 1 then we will duplicate both of them together
+                var tbody = $('#tabelItemProduct tbody')
+                //console.log('Ok');
+                var input = $('#rowTable').clone(true).find('#table_body_1').remove().end().insertAfter('#rowTable:last');
+                input.find('#tableBody, #rowTable, .text_body_2').text(inputVariation);
+                
+                input.find('#tableBody, #rowTable, #table_body_2').attr('title', idTrigger);
+                input.find('#id_is_default').attr({
+                    checked: false, 
+                    value: 'False',
+                });
+
+                // Append to table body 1
+                $('#yesVariation table tbody').append(input);   
+                
+            }else {
+                $('#yesVariation table tbody').find('.text_body_2').text(inputVariation);
+                
+                $('#yesVariation table tbody').find('#table_body_2').attr('title', idTrigger)
+                
+            }
+        });
+        // remove duplicate elements from table
+        
+        function getDeletedSize(){
+            var idTrigger = event['detail']['data']['__tagId']
+            $('#yesVariation table tbody tr').find('#table_body_2').each(function () {
+                var target = $(this)[0]['attributes']['title']['value'];
+                //console.log('target', target);
+                if (target == idTrigger) {
+                    $(this).parent().remove();
+                }
+            });
+        }
+
+        function getClearSize(){
+            var idTrigger = event['detail']['data']['__tagId']
+            $('#yesVariation table tbody tr').find('#table_body_2').each(function () {
+                var target = $(this)[0]['attributes']['title']['value'];
+                //console.log('target', target);
+                if (target == idTrigger) {
+                    $(this).find('.text_body_2').text('');
+                    $(this).find('.text_body_2').children().remove();
+                }
+            });
+
+        }
+        
+        tagify2.on('remove', function (event) {
+            var tbody = $('#tabelItemProduct tbody')
+            var trow = $('#tableBody tr')
+            console.log('row', trow)
+
+            var idTrigger = event['detail']['data']['__tagId']
+            $('.input-'+idTrigger).remove();
+            
+            if (tbody.length > 1 ){
+                // function remove tbody tr = 1
+                if (trow.length > 2) {
+                    getDeletedSize();
+                } else {
+                    getClearSize()
+                }
+            } else {
+                // function remove tbody = 1
+                if (trow.length > 1) {
+                    console.log("remove tbody")
+                    getDeletedSize();
+                } else {
+                    getClearSize();
+                }
+            }
+        });         
+    
+        function imgToData(input) {
+            console.log(input.title);
+            //check if the input file has been changed equal to the input file name
+            var file_name = input.files[0].name;
+            var existing_image = $('#img-box').find('.inputGalery').val();
+            console.log('existing_image', existing_image);
+            if (existing_image === file_name) {
+                alert('File gambar sudah ada, silahkan pilih file lain');
+                $('#id_image').val('');
+                
+                return false;
+            }
+
+            //check type input validation image element 
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/png',];
+            if (!allowedTypes.includes(input.files[0].type)) {
+                alert('Format file gambar yang diperbolehkan hanya JPEG, JPG, PNG AND GIF');
+                $('#id_image').val('');
+                
+                return false;
+            }
+            // check input image size
+            if (input.files[0].size > 1242880) {
+                alert('File gambar terlalu besar, maksimal ukuran file gambar adalah 1MB');
+                $('#id_image').val('');
+                
+                return false;
+            }
+
+            // check input file image equals to existing
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#previewGalery-'+input.title).attr('src', e.target.result);
+                    $('#cardGalery-'+input.title).attr('href', e.target.result);
+                    $('#cardGalery-'+input.title).attr('data-fancybox', input.title);
+                    $('#cardGalery-'+input.title).attr('data-caption', input.title);
+
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+            $('#cardGalery-'+input.title).attr('hidden', false);
+            $('#resetGalery-'+input.title).attr('hidden', false);
+            $('#labelGalery-'+input.title).attr('hidden', true);
+        }
+    
+        $('input[type="file"]').on('click', function(e){
+            $(this).on('change', function(){
+                imgToData(this);
+            });
+        });
+
+        $('.resetGalery').on('click', function(e){
+            title = this.title;
+            console.log(title);
+            $('.input-'+title).val('');
+            $('#cardGalery-'+title).attr('hidden', true);
+            $('#resetGalery-'+title).attr('hidden', true);
+            $('#labelGalery-'+title).attr('hidden', false);
+
+        });
+        
+    });
+
+
+// Image loading is enabled by default in the browser settings file and loaded when loading from the 
+    document.addEventListener('DOMContentLoaded', function (e) {
+    (function () {
+        // Update/reset user image of account page
+        let productImage = document.getElementById('uploadedProduct');
+        const fileInput = document.querySelector('.product-file-input'),
+        resetFileInput = document.querySelector('.product-image-reset');
+        const showImageNew = document.getElementById('productImageNew');
+
+        if (productImage) {
+        const resetImage = productImage.src;
+        fileInput.onchange = () => {
+
+            // Check file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(fileInput.files[0].type)) {
+            alert('Invalid file type. Please select a JPEG, PNG, or GIF file.');
+            return;
+            }
+
+            // Check file size
+            if (fileInput.files[0].size > 1048576) {
+                alert('File size is too large. Please select a file less than 1MB.');
+                return;
+            }
+
+            // Create a new FileReader object
+            if (fileInput.files[0]) {
+                productImage.src = window.URL.createObjectURL(fileInput.files[0]);
+            }
+
+            // Show new image
+            urlImage = window.URL.createObjectURL(fileInput.files[0]);
+            $('#productImageNew').attr('href', urlImage);
+            $('#productImageNew').attr('data-fancybox', 'imagesNew');
+
+        };
+
+        showImageNew.onclick = () => {
+            fancybox.open([{
+            src: showImageNew.src,
+            caption: 'New Image'
+            }]);
+        }
+
+        resetFileInput.onclick = () => {
+            fileInput.value = '';
+            productImage.src = resetImage;
+            $('#productImageNew').removeAttr('href');
+            $('#productImageNew').removeAttr('data-fancybox');
+        };
+        }
+    })();
+    });
+</script>
+
+{% endblock javascripts %}

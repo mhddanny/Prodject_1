@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{title}}
+{% endblock title %}
+{% block content %}
+
+<section class="section-conten padding-y bg">
+
+    {% include 'includes/alerts.html' %}
+    <div class="container">
+        <div class="row">
+            {% include 'accounts/dashboard_slide.html' %}
+            <main class="col-md-9">
+                <div class="card mb-2">
+                    <div class="card-body d-flex align-items-center">
+                        <nav class="flex-fill"> 
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'my_orders' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'delivered' %}">My Order</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'get_review' orderproduct.order.id%}">Review</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {% for item in orderproduct.variation.all %}
+                                    {{ item.variation_value | capfirst }}
+                                {% endfor %}
+                            </li>
+                        </ol>  
+                        </nav> <!-- col.// -->
+                    </div>
+                </div>
+
+                <article class="card mb-2">
+                    <header class="card-header">
+                        <ul class="row mt-2 mb-2">
+                            <li class="col-md-4 text-left">
+                                <strong class="d-inline-block mr-3">Order ID : &nbsp;&nbsp;{{orderproduct.order.order_number}}</strong>
+                            </li>
+                            <li class="col-md-4 text-left">
+                                <i class="fa fa-calendar-alt" style="color: orange;"></i>&nbsp;&nbsp;
+                                <span class=""> {{orderproduct.order.updated_at}}</span>
+                            </li>
+                        </ul>
+                    </header>
+                    <div class="card-body">
+                        <form action="." method="POST">
+                            {% csrf_token %}
+                            <div>
+                                <!-- Rating Stars -->
+                                <label for="">How do you rate this product?</label>
+                                <br>
+                                <div class="rate" id="rate">
+                                    <input type="radio" name="rating" id="rating10" value="5" required ><label for="rating10" title="5"></label>
+                                    <input type="radio" name="rating" id="rating9" value="4.5" required ><label for="rating9" title="4.5" class="half"></label>
+                                    <input type="radio" name="rating" id="rating8" value="4" required ><label for="rating8" title="4"></label>
+                                    <input type="radio" name="rating" id="rating7" value="3.5" required ><label for="rating7" title="3.5" class="half"></label>
+                                    <input type="radio" name="rating" id="rating6" value="3" required ><label for="rating6" title="3"></label>
+                                    <input type="radio" name="rating" id="rating5" value="2.5" required ><label for="rating5" title="2.5" class="half"></label>
+                                    <input type="radio" name="rating" id="rating4" value="2" required ><label for="rating4" title="2"></label>
+                                    <input type="radio" name="rating" id="rating3" value="1.5" required ><label for="rating3" title="1.5" class="half"></label>
+                                    <input type="radio" name="rating" id="rating2" value="1" required ><label for="rating2" title="1"></label>
+                                    <input type="radio" name="rating" id="rating1" value="0.5" required ><label for="rating1" title="0.5" class="half"></label>
+                                </div>
+                                <br>
+                                Review Title: 
+                                <input type="text" class="form-control mb-3", name="subject">
+                                
+                                Review:
+                                <textarea name="review" id="" rows="4" class="form-control mb-3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">submit</button>
+                        </form>
+                    </div>
+                    
+                </article>
+
+            </main>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

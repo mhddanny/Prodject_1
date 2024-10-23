@@ -1,0 +1,60 @@
+<aside class="col-md-3 mb-3">
+    <!--   SIDEBAR   -->
+    <ul class="list-group">
+        <a class="list-group-item {% if '/accounts/' == request.path %}
+            active
+            {% endif %}" href="{% url 'dashboard' %}"> 
+            <i class="fa fa-home" aria-hidden="true"></i>  &nbsp;
+            Dashboard 
+        </a>
+        <!-- My-Order -->
+        <a class="list-group-item {% if '/my_orders/' in request.path %}
+            active 
+            {% endif %}" href="{% url 'my_orders' %}"> 
+            <i class="fa fa-cart-plus" aria-hidden="true" ></i> &nbsp;
+            My Order 
+        </a>
+        <!-- My-Transaction -->
+        <a class="list-group-item {% if '/my_transaction/' in request.path %}
+            active 
+            {% endif %}" href="{% url 'my_transaction' %}"> 
+            <i class="fa fa-file-text" aria-hidden="true"></i> &nbsp;
+            My Transaction 
+        </a>
+        <!-- WISLIST -->
+        <a class="list-group-item {% if '/my_wishlists/' in request.path %}
+            active
+            {% endif %}" href="{% url 'my_wishlists' %}"> 
+            <i class="fa fa-thumbs-up" aria-hidden="true"></i> &nbsp;
+            My Wish list 
+        </a>
+        <!-- Address -->
+        <a class="list-group-item {% if '/address/' in request.path %}
+            active
+            {% endif %}" href="{% url 'address' %}"> 
+            <i class="fa fa-location-arrow" aria-hidden="true"></i> &nbsp;
+            Address Delivery
+        </a>
+        <!-- room Chat -->
+        <a class="list-group-item {% if '/chat-admin/' in request.path %}
+            active
+            {% endif %}" href="{% url 'chat:chat-admin' %}"> 
+            <i class="fa fa-comments" aria-hidden="true"></i>&nbsp;
+            Chat Room
+        </a>
+        <!-- Edit Proifile -->
+        <!-- <a class="list-group-item {% if '/edit_profile/' in request.path %}
+            active
+            {% endif %}" href="{% url 'edit_profile' %}"> Edit Prodile
+        </a> -->
+        <a class="list-group-item {% if '/change_password/' in request.path %}
+            active
+            {% endif %}" href="{% url 'change_password' %}">
+            <i class="fa fa-cogs" aria-hidden="true"></i> &nbsp;
+            Change Password 
+        </a>        
+    </ul>
+    <br>
+    <a class="btn btn-light btn-block" href="{% url 'logout' %}"> <i class="fa fa-power-off"></i> <span class="text">Log out</span> </a> 
+    <!--   SIDEBAR .//END   -->
+</aside>
