@@ -19,6 +19,11 @@ DEBUG = config('DEBUG', default=True, cast=bool) #True
 # Application definition
 
 INSTALLED_APPS = [
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    
     # 'channels',
     'chat',
     'daphne',
@@ -53,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'django_session_timeout.middleware.SessionTimeoutMiddleware',#session timeout
+    'allauth.account.middleware.AccountMiddleware', # allauth
 
 ]
 
@@ -96,6 +102,29 @@ CHANNEL_LAYERS = {
 
 
 AUTH_USER_MODEL = 'profiles.Account'
+
+# allauth settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        #'KEY': config('GOOGLE_CLIENT_ID'),
+        #'SECRET': config('GOOGLE_CLIENT_SECRET'),
+        'SCOPE': ['email', 'profile'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

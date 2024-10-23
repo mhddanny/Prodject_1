@@ -17,10 +17,13 @@ urlpatterns = [
 
     path('store/', include('store.urls')),
     path('cart/', include('carts.urls')),
-    path('accounts/', include('profiles.urls')),
-    path('blogs/', include('blog.urls')),
-    #orders
     path('orders/', include('orders.urls')),
+
+    # authentication
+    path('account/', include('profiles.urls')),
+    path('accounts/', include('allauth.urls')),
+    
+    path('blogs/', include('blog.urls')),
     #chat
     path('', include('chat.urls')),
     #admin
